@@ -56,11 +56,11 @@ export default function Navbar() {
           {session ? (
             <>
               <div className="hidden sm:flex items-center gap-2">
-                <span className="text-gold font-bold text-sm">{session.user.points} pts</span>
+                <span className="text-gold font-bold text-sm">{session.user?.points ?? 0} pts</span>
               </div>
               <Image
-                src={session.user.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
-                alt={session.user.username}
+                src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
+                alt={session.user?.username ?? 'User'}
                 width={32}
                 height={32}
                 className="rounded-full border border-dark-border"
