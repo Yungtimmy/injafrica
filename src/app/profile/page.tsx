@@ -122,16 +122,16 @@ export default function ProfilePage() {
       {/* Profile header */}
       <div className="card p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
         <Image
-          src={session.user.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
-          alt={session.user.username}
+          src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
+          alt={session.user?.username ?? 'User'}
           width={80}
           height={80}
           className="rounded-full border-2 border-primary"
         />
         <div className="flex-1">
-          <h1 className="text-2xl font-black">{session.user.username}</h1>
+          <h1 className="text-2xl font-black">{session.user?.username}</h1>
           <p className="text-gray-400 text-sm">
-            #{session.user.discriminator !== '0' ? session.user.discriminator : '0000'}
+            #{session.user?.discriminator !== '0' ? session.user?.discriminator : '0000'}
           </p>
           {userRank && (
             <div className="mt-2 inline-flex items-center gap-2 bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-semibold">
@@ -140,7 +140,7 @@ export default function ProfilePage() {
           )}
         </div>
         <div className="text-center">
-          <div className="text-4xl font-black text-gold">{session.user.points}</div>
+          <div className="text-4xl font-black text-gold">{session.user?.points ?? 0}</div>
           <div className="text-xs text-gray-400">Total Points</div>
         </div>
       </div>

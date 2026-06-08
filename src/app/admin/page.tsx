@@ -38,7 +38,7 @@ export default function AdminPage() {
     if (!session) return;
 
     const adminIds = (process.env.NEXT_PUBLIC_ADMIN_DISCORD_IDS || '').split(',');
-    const isAdminUser = adminIds.includes(session.user.discordId);
+    const isAdminUser = adminIds.includes(session.user?.discordId ?? '');
     setIsAdmin(isAdminUser);
 
     if (isAdminUser) {

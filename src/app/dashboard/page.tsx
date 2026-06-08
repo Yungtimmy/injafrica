@@ -66,7 +66,7 @@ async function getDashboardData(discordId: string) {
 
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session) redirect('/');
+  if (!session || !session.user?.discordId) redirect('/');
 
   const { upcomingMatches, liveMatches, predMap, recentPredictions, userRank } =
     await getDashboardData(session.user.discordId);
@@ -77,22 +77,22 @@ export default async function DashboardPage() {
       <div className="card p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <Image
-            src={session.user.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
-            alt={session.user.username}
+            src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
+            alt={session.user?.username ?? 'User'}
             width={56}
             height={56}
             className="rounded-full border-2 border-primary"
           />
           <div>
             <h1 className="text-xl font-bold">
-              Welcome, <span className="text-primary">{session.user.username}</span>!
+              Welcome, <span className="text-primary">{session.user?.username}</span>!
             </h1>
             <p className="text-sm text-gray-400">Ready to predict some matches?</p>
           </div>
         </div>
         <div className="flex items-center gap-6">
           <div className="text-center">
-            <div className="text-3xl font-black text-gold">{session.user.points}</div>
+            <div className="text-3xl font-black text-gold">{session.user?.points ?? 0}</div>
             <div className="text-xs text-gray-400">Total Points</div>
           </div>
           {userRank && (

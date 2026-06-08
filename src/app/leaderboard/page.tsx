@@ -23,7 +23,7 @@ async function getLeaderboard(): Promise<ILeaderboardEntry[]> {
 
 export default async function LeaderboardPage() {
   const session = await auth();
-  if (!session) redirect('/');
+  if (!session || !session.user?.discordId) redirect('/');
 
   const entries = await getLeaderboard();
 
