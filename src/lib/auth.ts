@@ -10,7 +10,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientSecret: process.env.AUTH_DISCORD_SECRET!,
       authorization: {
         params: {
-          scope: 'identify guilds.members.read',
+          scope: 'identify guilds',
         },
       },
     }),
@@ -26,21 +26,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return false;
       }
 
-      // Check guild membership
+      // Check guild membership via guilds list
       try {
-        const res = await fetch(
-          `https://discord.com/api/users/@me/guilds/${guildId}/member`,
-          {
-            headers: {
-              Authorization: `Bearer ${account.access_token}`,
-            },
-          }
-        );
+        const res = await fetch('https://discord.com/api/users/@me/guilds', {
+          headers: {
+            Authorization: `Bearer ${account.access_token}`,
+          },
+        });
 
         if (!res.ok) {
+          console.error('Failed to fetch guilds:', res.status);
           return '/not-authorized';
         }
-      } catch {
+
+        const guilds: { id: string }[] = await res.json();
+        const isMember = guilds.some((g) => g.id === guildId);
+
+        if (!isMember) {
+          return '/not-authorized';
+        }
+      } catch (err) {
+        console.error('Guild check error:', err);
         return '/not-authorized';
       }
 
