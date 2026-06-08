@@ -67,6 +67,7 @@ async function getDashboardData(discordId: string) {
 export default async function DashboardPage() {
   const session = await auth();
   if (!session || !session.user?.discordId) redirect('/');
+  if (!session.user.guildVerified) redirect('/not-authorized');
 
   const { upcomingMatches, liveMatches, predMap, recentPredictions, userRank } =
     await getDashboardData(session.user.discordId);

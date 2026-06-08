@@ -24,6 +24,7 @@ async function getLeaderboard(): Promise<ILeaderboardEntry[]> {
 export default async function LeaderboardPage() {
   const session = await auth();
   if (!session || !session.user?.discordId) redirect('/');
+  if (!session.user.guildVerified) redirect('/not-authorized');
 
   const entries = await getLeaderboard();
 
