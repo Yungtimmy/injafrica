@@ -11,6 +11,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       authorization: {
         params: {
           scope: 'identify guilds',
+          prompt: 'consent',
         },
       },
     }),
