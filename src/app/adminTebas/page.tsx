@@ -60,6 +60,7 @@ export default function AdminPage() {
   const [seeding, setSeeding] = useState(false);
   const [tournamentEnded, setTournamentEnded] = useState(false);
   const [togglingTournament, setTogglingTournament] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   // Score inputs
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
@@ -122,6 +123,17 @@ export default function AdminPage() {
     setSeedMsg(res.ok ? data.message : data.error);
     setSeeding(false);
     if (res.ok) fetchMatches();
+  }
+
+  async function handleResetPoints() {
+    if (!confirm('This will DELETE all predictions and reset every user\'s points to 0. This cannot be undone. Continue?')) return;
+    setResetting(true);
+    setSeedMsg('');
+    const res = await fetch('/api/admin/reset-points', { method: 'POST' });
+    const data = await res.json();
+    setSeedMsg(res.ok ? data.message : data.error);
+    setResetting(false);
+    if (res.ok) fetchWallets();
   }
 
   async function handleToggleTournament() {
@@ -239,6 +251,13 @@ export default function AdminPage() {
             }`}
           >
             {togglingTournament ? '...' : tournamentEnded ? 'Reactivate Tournament' : 'End Tournament'}
+          </button>
+          <button
+            onClick={handleResetPoints}
+            disabled={resetting}
+            className="text-xs px-3 py-2 rounded-sm font-bold bg-orange-700 hover:bg-orange-600 text-white transition-colors disabled:opacity-40"
+          >
+            {resetting ? 'Resetting...' : 'Reset All Points'}
           </button>
           <button
             onClick={() => { setShowCreateForm(!showCreateForm); setCreateMsg(''); }}
