@@ -74,6 +74,10 @@ export default function AdminPage() {
   // Filter
   const [stageFilter, setStageFilter] = useState('All');
 
+  // Wallets
+  const [wallets, setWallets] = useState<{ discordId: string; username: string; points: number; walletAddress: string }[]>([]);
+  const [activeTab, setActiveTab] = useState<'matches' | 'wallets'>('matches');
+
   useEffect(() => {
     if (status === 'unauthenticated') window.location.href = '/';
   }, [status]);
@@ -87,6 +91,7 @@ export default function AdminPage() {
         if (adminResult) {
           fetchMatches();
           fetchTournamentStatus();
+          fetchWallets();
         } else {
           setLoading(false);
         }
@@ -150,6 +155,11 @@ export default function AdminPage() {
       [matchId]: res.ok ? `Done. ${data.predictionsUpdated} predictions scored.` : (data.error || 'Error'),
     }));
     if (res.ok) fetchMatches();
+  }
+
+  async function fetchWallets() {
+    const res = await fetch('/api/admin/wallets');
+    if (res.ok) setWallets(await res.json());
   }
 
   async function handleCreateMatch(e: React.FormEvent) {
@@ -337,8 +347,50 @@ export default function AdminPage() {
         </div>
       )}
 
-      {/* Stage filter tabs */}
-      <div className="flex gap-1 overflow-x-auto no-scrollbar pb-1">
+      {/* Main tab switcher */}
+      <div className="flex gap-1">
+        {(['matches', 'wallets'] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`text-xs font-bold px-4 py-2 rounded-sm transition-colors capitalize ${
+              activeTab === tab
+                ? 'bg-sb-yellow text-black'
+                : 'bg-sb-card border border-sb-border text-sb-muted hover:text-white'
+            }`}
+          >
+            {tab === 'wallets' ? `Wallets (${wallets.length})` : 'Matches'}
+          </button>
+        ))}
+      </div>
+
+      {/* Wallets tab */}
+      {activeTab === 'wallets' && (
+        <div className="sb-card overflow-hidden">
+          <div className="sb-section-header">
+            Linked Wallets
+            <span className="ml-auto text-sb-muted text-[10px] font-normal normal-case">{wallets.length} users</span>
+          </div>
+          {wallets.length === 0 ? (
+            <div className="p-8 text-center text-sb-muted text-sm">No wallets linked yet</div>
+          ) : (
+            wallets.map((u, i) => (
+              <div key={u.discordId} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border last:border-0">
+                <div className="text-sb-muted text-xs font-mono w-6 shrink-0">{i + 1}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-white">{u.username}</div>
+                  <div className="text-[10px] text-sb-muted">{u.discordId}</div>
+                </div>
+                <div className="text-sb-yellow font-black text-sm shrink-0">{u.points} pts</div>
+                <div className="text-green-400 font-mono text-xs break-all text-right max-w-[200px]">{u.walletAddress}</div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Stage filter tabs — matches only */}
+      {activeTab === 'matches' && <div className="flex gap-1 overflow-x-auto no-scrollbar pb-1">
         {allStages.map((s) => (
           <button
             key={s}
@@ -352,10 +404,10 @@ export default function AdminPage() {
             {s}
           </button>
         ))}
-      </div>
+      </div>}
 
-      {/* Matches list */}
-      <div className="sb-card overflow-hidden">
+      {/* Matches list — matches only */}
+      {activeTab === 'matches' && <div className="sb-card overflow-hidden">
         <div className="sb-section-header">
           {stageFilter === 'All' ? 'All Matches' : stageFilter}
           <span className="ml-auto text-sb-muted text-[10px] font-normal normal-case">{filteredMatches.length} matches</span>
@@ -419,7 +471,7 @@ export default function AdminPage() {
             </div>
           ))
         )}
-      </div>
+      </div>}
     </div>
   );
 }
