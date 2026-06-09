@@ -3,7 +3,6 @@
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { redirect } from 'next/navigation';
 
 interface PredictionWithMatch {
   _id: string;
@@ -32,14 +31,12 @@ export default function ProfilePage() {
   const [walletAddress, setWalletAddress] = useState('');
   const [walletSubmitting, setWalletSubmitting] = useState(false);
   const [walletMessage, setWalletMessage] = useState('');
-  const [tournamentEnded, setTournamentEnded] = useState(false);
-  const [userRank, setUserRank] = useState<number | null>(null);
   const [savedWallet, setSavedWallet] = useState<string | null>(null);
+  const [userRank, setUserRank] = useState<number | null>(null);
+  const [tournamentEnded, setTournamentEnded] = useState(false);
 
   useEffect(() => {
-    if (status === 'unauthenticated') {
-      window.location.href = '/';
-    }
+    if (status === 'unauthenticated') window.location.href = '/';
   }, [status]);
 
   useEffect(() => {
@@ -58,225 +55,188 @@ export default function ProfilePage() {
         fetch('/api/predictions/profile'),
         fetch('/api/leaderboard'),
       ]);
-
       if (predRes.ok) {
         const data = await predRes.json();
         setPredictions(data.predictions || []);
         setTournamentEnded(data.tournamentEnded || false);
       }
-
       if (lbRes.ok) {
         const lbData = await lbRes.json();
-        const myEntry = lbData.find(
-          (e: { discordId: string; rank: number }) => e.discordId === session?.user.discordId
-        );
-        if (myEntry) setUserRank(myEntry.rank);
+        const me = lbData.find((e: { discordId: string; rank: number }) => e.discordId === session?.user?.discordId);
+        if (me) setUserRank(me.rank);
       }
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    } catch (err) { console.error(err); }
+    finally { setLoading(false); }
   }
 
   async function handleWalletSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!walletAddress.trim()) return;
+    const addr = walletAddress.trim();
+    if (!addr) return;
     setWalletSubmitting(true);
     setWalletMessage('');
     try {
       const res = await fetch('/api/wallet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress }),
+        body: JSON.stringify({ walletAddress: addr }),
       });
       const data = await res.json();
       if (res.ok) {
-        setWalletMessage('✅ Wallet address saved successfully!');
-        setSavedWallet(walletAddress);
+        setSavedWallet(addr);
+        setWalletMessage('✅ Wallet address saved!');
       } else {
-        setWalletMessage(`❌ ${data.error || 'Failed to save wallet'}`);
+        setWalletMessage(`❌ ${data.error || 'Failed to save'}`);
       }
-    } catch {
-      setWalletMessage('❌ Network error');
-    } finally {
-      setWalletSubmitting(false);
-    }
+    } catch { setWalletMessage('❌ Network error'); }
+    finally { setWalletSubmitting(false); }
   }
 
   if (status === 'loading' || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-400">Loading profile...</div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="text-sb-muted text-sm">Loading...</div>
       </div>
     );
   }
 
   if (!session) return null;
 
-  const totalPredictions = predictions.length;
-  const finishedPredictions = predictions.filter((p) => p.pointsEarned !== null);
-  const exactScores = finishedPredictions.filter((p) => p.pointsEarned === 5).length;
-  const correctOutcomes = finishedPredictions.filter(
-    (p) => p.pointsEarned !== null && p.pointsEarned > 0 && p.pointsEarned < 5
-  ).length;
-
-  const canSubmitWallet = tournamentEnded && userRank !== null && userRank <= 3;
-  void canSubmitWallet; // used below for prize claim section
+  const total = predictions.length;
+  const scored = predictions.filter((p) => p.pointsEarned !== null);
+  const exactScores = scored.filter((p) => p.pointsEarned === 5).length;
+  const correctOutcomes = scored.filter((p) => p.pointsEarned !== null && p.pointsEarned > 0 && p.pointsEarned < 5).length;
+  const wrong = scored.filter((p) => p.pointsEarned === 0).length;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      {/* Profile header */}
-      <div className="card p-6 mb-6 flex flex-col sm:flex-row items-start sm:items-center gap-6">
+    <div className="max-w-3xl mx-auto px-3 py-4 space-y-3">
+
+      {/* Profile card */}
+      <div className="sb-card p-4 flex items-center gap-4">
         <Image
-          src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
+          src={session.user?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}
           alt={session.user?.username ?? 'User'}
-          width={80}
-          height={80}
-          className="rounded-full border-2 border-primary"
+          width={56}
+          height={56}
+          className="rounded-full border-2 border-sb-yellow/60 shrink-0"
         />
-        <div className="flex-1">
-          <h1 className="text-2xl font-black">{session.user?.username}</h1>
-          <p className="text-gray-400 text-sm">
-            #{session.user?.discriminator !== '0' ? session.user?.discriminator : '0000'}
-          </p>
+        <div className="flex-1 min-w-0">
+          <div className="font-black text-white text-lg leading-tight">{session.user?.username}</div>
+          <div className="text-sb-muted text-xs">Discord ID · {session.user?.discordId}</div>
           {userRank && (
-            <div className="mt-2 inline-flex items-center gap-2 bg-primary/20 text-primary px-3 py-1 rounded-full text-sm font-semibold">
-              Rank #{userRank}
+            <div className="mt-1 inline-flex items-center gap-1.5 bg-sb-yellow/10 border border-sb-yellow/30 text-sb-yellow text-xs font-bold px-2 py-0.5 rounded-sm">
+              #{userRank} on Leaderboard
             </div>
           )}
         </div>
-        <div className="text-center">
-          <div className="text-4xl font-black text-gold">{session.user?.points ?? 0}</div>
-          <div className="text-xs text-gray-400">Total Points</div>
+        <div className="text-right shrink-0">
+          <div className="text-3xl font-black text-sb-yellow">{session.user?.points ?? 0}</div>
+          <div className="text-[10px] text-sb-muted uppercase">Total Pts</div>
         </div>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-black text-primary">{totalPredictions}</div>
-          <div className="text-xs text-gray-400">Predictions</div>
-        </div>
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-black text-green-400">{finishedPredictions.length}</div>
-          <div className="text-xs text-gray-400">Scored</div>
-        </div>
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-black text-gold">{exactScores}</div>
-          <div className="text-xs text-gray-400">Exact Scores</div>
-        </div>
-        <div className="card p-4 text-center">
-          <div className="text-2xl font-black text-blue-400">{correctOutcomes}</div>
-          <div className="text-xs text-gray-400">Correct Outcomes</div>
-        </div>
+      {/* Stats row */}
+      <div className="grid grid-cols-4 gap-1.5">
+        {[
+          { val: total, label: 'Predictions', color: 'text-white' },
+          { val: exactScores, label: 'Exact Scores', color: 'text-sb-yellow' },
+          { val: correctOutcomes, label: 'Correct Wins', color: 'text-green-400' },
+          { val: wrong, label: 'Wrong', color: 'text-red-400' },
+        ].map((s) => (
+          <div key={s.label} className="sb-card p-3 text-center">
+            <div className={`text-2xl font-black ${s.color}`}>{s.val}</div>
+            <div className="text-[10px] text-sb-muted mt-0.5">{s.label}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Wallet linking — available to all users */}
-      <div className="card p-6 mb-6">
-        <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
-          💼 <span>Injective Wallet</span>
-        </h2>
-        {savedWallet ? (
-          <p className="text-xs text-gray-400 mb-4">
-            Linked: <span className="text-green-400 font-mono">{savedWallet}</span>
+      {/* Wallet section */}
+      <div className="sb-card overflow-hidden">
+        <div className="sb-section-header">💼 Injective Wallet Address</div>
+        <div className="p-4">
+          {savedWallet && (
+            <div className="mb-3 flex items-center gap-2 bg-sb-bg border border-sb-border rounded-sm px-3 py-2">
+              <span className="text-green-400 text-xs">●</span>
+              <span className="text-green-400 font-mono text-xs break-all">{savedWallet}</span>
+            </div>
+          )}
+          <p className="text-sb-muted text-xs mb-3">
+            {savedWallet
+              ? 'Update your linked wallet address below.'
+              : 'Enter your Injective wallet address to link it to your account. Top 3 players receive prizes at tournament end.'}
           </p>
-        ) : (
-          <p className="text-gray-400 text-sm mb-4">
-            Link your Injective wallet address. Top 3 at tournament end will receive prizes.
-          </p>
-        )}
-        <form onSubmit={handleWalletSubmit} className="flex gap-3">
-          <input
-            type="text"
-            value={walletAddress}
-            onChange={(e) => setWalletAddress(e.target.value)}
-            placeholder="inj1..."
-            className="flex-1 bg-dark border border-dark-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary"
-          />
-          <button
-            type="submit"
-            disabled={walletSubmitting}
-            className="btn-primary text-sm px-4 py-2 disabled:opacity-50"
-          >
-            {walletSubmitting ? 'Saving...' : savedWallet ? 'Update' : 'Link'}
-          </button>
-        </form>
-        {walletMessage && <p className="mt-2 text-sm">{walletMessage}</p>}
+          <form onSubmit={handleWalletSubmit} className="flex gap-2">
+            <input
+              type="text"
+              value={walletAddress}
+              onChange={(e) => setWalletAddress(e.target.value)}
+              placeholder="inj1..."
+              className="flex-1 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-3 py-2 text-sm text-white font-mono focus:outline-none placeholder:text-sb-muted"
+            />
+            <button
+              type="submit"
+              disabled={walletSubmitting || !walletAddress.trim()}
+              className="sb-btn text-xs px-4 disabled:opacity-40"
+            >
+              {walletSubmitting ? 'Saving...' : savedWallet ? 'Update' : 'Save'}
+            </button>
+          </form>
+          {walletMessage && (
+            <p className="mt-2 text-xs text-sb-muted">{walletMessage}</p>
+          )}
+        </div>
       </div>
 
-      {/* Prize claim banner for top 3 after tournament */}
+      {/* Prize banner for top 3 after tournament */}
       {tournamentEnded && userRank !== null && userRank <= 3 && (
-        <div className="card p-4 mb-6 border border-gold/40 bg-gold/5">
-          <p className="text-gold font-semibold text-sm">
+        <div className="sb-card p-4 border-l-4 border-l-sb-yellow bg-sb-yellow/5">
+          <p className="text-sb-yellow font-bold text-sm">
             🏆 You finished #{userRank} — make sure your wallet above is correct to claim your prize!
           </p>
         </div>
       )}
 
       {/* Predictions history */}
-      <div>
-        <h2 className="text-xl font-bold mb-4">Predictions History</h2>
+      <div className="sb-card overflow-hidden">
+        <div className="sb-section-header">📋 Predictions History</div>
         {predictions.length === 0 ? (
-          <div className="card p-8 text-center text-gray-500">
-            No predictions yet
-          </div>
+          <div className="p-8 text-center text-sb-muted text-sm">No predictions yet</div>
         ) : (
-          <div className="space-y-2">
-            {predictions.map((pred) => {
-              const match = pred.matchId;
-              const isFinished = match?.status === 'finished';
-              return (
-                <div key={pred._id} className="card p-4 flex items-center justify-between gap-4">
-                  <div className="flex-1 min-w-0">
-                    <div className="font-semibold text-sm truncate">
-                      {match?.homeTeam} vs {match?.awayTeam}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {match?.stage} · Group {match?.group} ·{' '}
-                      {match?.matchDate
-                        ? new Date(match.matchDate).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })
-                        : ''}
-                    </div>
+          predictions.map((pred) => {
+            const match = pred.matchId;
+            const pts = pred.pointsEarned;
+            const ptColor = pts === 5 ? 'text-sb-yellow' : pts && pts > 0 ? 'text-green-400' : pts === 0 ? 'text-red-400' : 'text-sb-muted';
+            return (
+              <div key={pred._id} className="flex items-center px-4 py-3 border-b border-sb-border hover:bg-sb-card-2 gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-semibold text-white truncate">
+                    {match?.homeTeam} vs {match?.awayTeam}
                   </div>
-                  <div className="text-center">
-                    <div className="text-xs text-gray-500 mb-0.5">Your Pick</div>
-                    <div className="font-bold text-white">
-                      {pred.predictedHome}–{pred.predictedAway}
-                    </div>
-                  </div>
-                  {isFinished && (
-                    <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-0.5">Result</div>
-                      <div className="font-bold text-white">
-                        {match.homeScore}–{match.awayScore}
-                      </div>
-                    </div>
-                  )}
-                  <div className="text-center min-w-[60px]">
-                    {pred.pointsEarned !== null ? (
-                      <span
-                        className={`text-lg font-black ${
-                          pred.pointsEarned === 5
-                            ? 'text-gold'
-                            : pred.pointsEarned > 0
-                            ? 'text-green-400'
-                            : 'text-red-400'
-                        }`}
-                      >
-                        +{pred.pointsEarned}
-                      </span>
-                    ) : (
-                      <span className="text-xs text-gray-500">Pending</span>
-                    )}
+                  <div className="text-[10px] text-sb-muted">
+                    {match?.stage} · Group {match?.group} ·{' '}
+                    {match?.matchDate ? new Date(match.matchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
                   </div>
                 </div>
-              );
-            })}
-          </div>
+                <div className="text-center shrink-0">
+                  <div className="text-[10px] text-sb-muted">Your Pick</div>
+                  <div className="font-bold text-white text-sm">{pred.predictedHome}–{pred.predictedAway}</div>
+                </div>
+                {match?.status === 'finished' && (
+                  <div className="text-center shrink-0">
+                    <div className="text-[10px] text-sb-muted">Result</div>
+                    <div className="font-bold text-white text-sm">{match.homeScore}–{match.awayScore}</div>
+                  </div>
+                )}
+                <div className="text-right shrink-0 min-w-[48px]">
+                  {pts !== null ? (
+                    <span className={`font-black text-base ${ptColor}`}>+{pts}</span>
+                  ) : (
+                    <span className="text-[10px] text-sb-muted uppercase">Pending</span>
+                  )}
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
     </div>
