@@ -18,23 +18,13 @@ export async function POST() {
   try {
     await dbConnect();
 
-    let inserted = 0;
-    let skipped = 0;
-
-    for (const fixture of wc2026Fixtures) {
-      const existing = await Match.findOne({ matchId: fixture.matchId });
-      if (existing) {
-        skipped++;
-        continue;
-      }
-      await Match.create(fixture);
-      inserted++;
-    }
+    // Wipe all existing matches and reseed fresh
+    await Match.deleteMany({});
+    await Match.insertMany(wc2026Fixtures);
 
     return NextResponse.json({
-      message: `Seeded ${inserted} fixtures. Skipped ${skipped} existing.`,
-      inserted,
-      skipped,
+      message: `Reseeded ${wc2026Fixtures.length} fixtures successfully.`,
+      inserted: wc2026Fixtures.length,
     });
   } catch (error) {
     console.error('POST /api/admin/seed error:', error);
