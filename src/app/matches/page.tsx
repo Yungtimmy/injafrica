@@ -34,7 +34,6 @@ const STAGE_ORDER = ['Group Stage', 'Round of 16', 'Quarter-finals', 'Semi-final
 export default async function MatchesPage() {
   const session = await auth();
   if (!session || !session.user?.discordId) redirect('/');
-  if (!session.user.guildVerified) redirect('/not-authorized');
 
   const { grouped, predMap } = await getMatchesData(session.user.discordId);
 

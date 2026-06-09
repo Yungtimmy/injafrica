@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const [walletMessage, setWalletMessage] = useState('');
   const [tournamentEnded, setTournamentEnded] = useState(false);
   const [userRank, setUserRank] = useState<number | null>(null);
+  const [savedWallet, setSavedWallet] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -44,6 +45,10 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!session) return;
     fetchData();
+    if (session.user?.walletAddress) {
+      setSavedWallet(session.user.walletAddress);
+      setWalletAddress(session.user.walletAddress);
+    }
   }, [session]);
 
   async function fetchData() {
@@ -88,6 +93,7 @@ export default function ProfilePage() {
       const data = await res.json();
       if (res.ok) {
         setWalletMessage('✅ Wallet address saved successfully!');
+        setSavedWallet(walletAddress);
       } else {
         setWalletMessage(`❌ ${data.error || 'Failed to save wallet'}`);
       }
@@ -116,6 +122,7 @@ export default function ProfilePage() {
   ).length;
 
   const canSubmitWallet = tournamentEnded && userRank !== null && userRank <= 3;
+  void canSubmitWallet; // used below for prize claim section
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -165,34 +172,45 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Wallet submission (top 3 only after tournament ends) */}
-      {canSubmitWallet && (
-        <div className="card p-6 mb-6 border-gold/30">
-          <h2 className="text-lg font-bold mb-2 flex items-center gap-2">
-            🏆 <span className="gradient-text">Claim Your Prize</span>
-          </h2>
-          <p className="text-gray-400 text-sm mb-4">
-            Congratulations! You&apos;re in the top 3. Submit your Injective wallet address to receive your prize.
+      {/* Wallet linking — available to all users */}
+      <div className="card p-6 mb-6">
+        <h2 className="text-lg font-bold mb-1 flex items-center gap-2">
+          💼 <span>Injective Wallet</span>
+        </h2>
+        {savedWallet ? (
+          <p className="text-xs text-gray-400 mb-4">
+            Linked: <span className="text-green-400 font-mono">{savedWallet}</span>
           </p>
-          <form onSubmit={handleWalletSubmit} className="flex gap-3">
-            <input
-              type="text"
-              value={walletAddress}
-              onChange={(e) => setWalletAddress(e.target.value)}
-              placeholder="inj1..."
-              className="flex-1 bg-dark border border-dark-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary"
-            />
-            <button
-              type="submit"
-              disabled={walletSubmitting}
-              className="btn-primary text-sm px-4 py-2 disabled:opacity-50"
-            >
-              {walletSubmitting ? 'Saving...' : 'Submit'}
-            </button>
-          </form>
-          {walletMessage && (
-            <p className="mt-2 text-sm">{walletMessage}</p>
-          )}
+        ) : (
+          <p className="text-gray-400 text-sm mb-4">
+            Link your Injective wallet address. Top 3 at tournament end will receive prizes.
+          </p>
+        )}
+        <form onSubmit={handleWalletSubmit} className="flex gap-3">
+          <input
+            type="text"
+            value={walletAddress}
+            onChange={(e) => setWalletAddress(e.target.value)}
+            placeholder="inj1..."
+            className="flex-1 bg-dark border border-dark-border rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-primary"
+          />
+          <button
+            type="submit"
+            disabled={walletSubmitting}
+            className="btn-primary text-sm px-4 py-2 disabled:opacity-50"
+          >
+            {walletSubmitting ? 'Saving...' : savedWallet ? 'Update' : 'Link'}
+          </button>
+        </form>
+        {walletMessage && <p className="mt-2 text-sm">{walletMessage}</p>}
+      </div>
+
+      {/* Prize claim banner for top 3 after tournament */}
+      {tournamentEnded && userRank !== null && userRank <= 3 && (
+        <div className="card p-4 mb-6 border border-gold/40 bg-gold/5">
+          <p className="text-gold font-semibold text-sm">
+            🏆 You finished #{userRank} — make sure your wallet above is correct to claim your prize!
+          </p>
         </div>
       )}
 
