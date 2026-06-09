@@ -127,9 +127,9 @@ export default function PredictionForm({
       </div>
 
       {/* Correct score */}
-      <div className="flex items-center gap-2 pt-1">
+      <div className="flex flex-wrap items-center gap-2 pt-1">
         <span className="text-[10px] text-sb-muted uppercase tracking-wide shrink-0">Correct Score:</span>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <input
             type="number" min="0" max="20"
             value={homeScore}

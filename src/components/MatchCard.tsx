@@ -47,8 +47,8 @@ export default function MatchCard({ match, prediction, showPredictionForm = fals
       {/* Teams + score */}
       <div className="flex items-center px-3 py-3 gap-2">
         {/* Home */}
-        <div className="flex-1 text-right">
-          <span className="font-bold text-sm text-white leading-tight">{match.homeTeam}</span>
+        <div className="flex-1 text-right min-w-0">
+          <span className="font-bold text-sm text-white leading-tight line-clamp-2">{match.homeTeam}</span>
         </div>
 
         {/* Score / VS */}
@@ -71,8 +71,8 @@ export default function MatchCard({ match, prediction, showPredictionForm = fals
         </div>
 
         {/* Away */}
-        <div className="flex-1 text-left">
-          <span className="font-bold text-sm text-white leading-tight">{match.awayTeam}</span>
+        <div className="flex-1 text-left min-w-0">
+          <span className="font-bold text-sm text-white leading-tight line-clamp-2">{match.awayTeam}</span>
         </div>
       </div>
 

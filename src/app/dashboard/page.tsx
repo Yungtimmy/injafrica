@@ -74,21 +74,21 @@ export default async function DashboardPage() {
   return (
     <div className="max-w-7xl mx-auto px-3 py-4">
       {/* User stats bar */}
-      <div className="sb-card mb-4 px-4 py-3 flex items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      <div className="sb-card mb-4 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <Image
             src={session.user?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}
             alt={session.user?.username ?? 'User'}
             width={36}
             height={36}
-            className="rounded-full border-2 border-sb-yellow/50"
+            className="rounded-full border-2 border-sb-yellow/50 shrink-0"
           />
-          <div>
-            <div className="font-bold text-white text-sm">{session.user?.username}</div>
+          <div className="min-w-0">
+            <div className="font-bold text-white text-sm truncate">{session.user?.username}</div>
             <div className="text-sb-muted text-xs">WC2026 Predictor</div>
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 shrink-0">
           <div className="text-center">
             <div className="text-xl font-black text-sb-yellow">{session.user?.points ?? 0}</div>
             <div className="text-[10px] text-sb-muted uppercase">Points</div>
@@ -99,7 +99,7 @@ export default async function DashboardPage() {
               <div className="text-[10px] text-sb-muted uppercase">Rank</div>
             </div>
           )}
-          <Link href="/leaderboard" className="sb-btn text-xs px-3 py-2 hidden sm:block">
+          <Link href="/leaderboard" className="sb-btn text-xs px-3 py-2">
             Leaderboard
           </Link>
         </div>

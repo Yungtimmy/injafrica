@@ -33,7 +33,7 @@ export default async function LandingPage() {
         <div className="sb-section-header mb-0 rounded-sm rounded-b-none">
           How Points Work
         </div>
-        <div className="sb-card rounded-t-none mb-6 grid grid-cols-3 divide-x divide-sb-border">
+        <div className="sb-card rounded-t-none mb-6 grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-sb-border">
           <div className="p-5 text-center">
             <div className="text-4xl font-black text-sb-yellow mb-1">5</div>
             <div className="text-white font-bold text-sm mb-1">Exact Score</div>

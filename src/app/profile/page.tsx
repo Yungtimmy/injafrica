@@ -136,7 +136,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Stats row */}
-      <div className="grid grid-cols-4 gap-1.5">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
         {[
           { val: total, label: 'Predictions', color: 'text-white' },
           { val: exactScores, label: 'Exact Scores', color: 'text-sb-yellow' },
@@ -207,13 +207,13 @@ export default function ProfilePage() {
             const pts = pred.pointsEarned;
             const ptColor = pts === 5 ? 'text-sb-yellow' : pts && pts > 0 ? 'text-green-400' : pts === 0 ? 'text-red-400' : 'text-sb-muted';
             return (
-              <div key={pred._id} className="flex items-center px-4 py-3 border-b border-sb-border hover:bg-sb-card-2 gap-3">
-                <div className="flex-1 min-w-0">
+              <div key={pred._id} className="flex flex-wrap items-center px-4 py-3 border-b border-sb-border hover:bg-sb-card-2 gap-x-3 gap-y-1">
+                <div className="flex-1 min-w-0 basis-full sm:basis-auto">
                   <div className="text-sm font-semibold text-white truncate">
                     {match?.homeTeam} vs {match?.awayTeam}
                   </div>
                   <div className="text-[10px] text-sb-muted">
-                    {match?.stage} · Group {match?.group} ·{' '}
+                    {match?.stage}{match?.group ? ` · Group ${match.group}` : ''} ·{' '}
                     {match?.matchDate ? new Date(match.matchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
                   </div>
                 </div>
