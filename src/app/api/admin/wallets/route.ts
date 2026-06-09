@@ -15,7 +15,7 @@ export async function GET() {
   }
 
   await dbConnect();
-  const users = await User.find({ walletAddress: { $ne: null, $ne: '' } })
+  const users = await User.find({ walletAddress: { $exists: true, $nin: [null, ''] } })
     .sort({ points: -1 })
     .select('discordId username points walletAddress')
     .lean();
