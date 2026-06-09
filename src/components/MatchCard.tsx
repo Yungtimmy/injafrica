@@ -98,7 +98,7 @@ export default function MatchCard({ match, prediction, showPredictionForm = fals
           )}
 
           {canPredict && (
-            <PredictionForm matchId={match._id} existingPrediction={prediction} />
+            <PredictionForm matchId={match._id} homeTeam={match.homeTeam} awayTeam={match.awayTeam} existingPrediction={prediction} />
           )}
 
           {!canPredict && !prediction && isPast && !isFinished && !isLive && (
