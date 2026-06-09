@@ -20,7 +20,7 @@ export default function LeaderboardTable({ entries, currentDiscordId }: Leaderbo
   return (
     <div className="sb-card overflow-hidden">
       <div className="sb-section-header">
-        <span>🏆</span> Rankings
+        Rankings
         <span className="ml-auto text-sb-muted text-[10px] font-normal normal-case tracking-normal">{entries.length} players</span>
       </div>
       <table className="w-full">

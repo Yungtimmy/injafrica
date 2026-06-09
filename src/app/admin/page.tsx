@@ -71,7 +71,7 @@ export default function AdminPage() {
     setSeedMsg('');
     const res = await fetch('/api/admin/seed', { method: 'POST' });
     const data = await res.json();
-    setSeedMsg(res.ok ? `✅ ${data.message}` : `❌ ${data.error}`);
+    setSeedMsg(res.ok ? data.message : data.error);
     setSeeding(false);
     if (res.ok) fetchMatches();
   }
@@ -82,7 +82,7 @@ export default function AdminPage() {
     const home = parseInt(input.home);
     const away = parseInt(input.away);
     if (isNaN(home) || isNaN(away)) {
-      setScoreMessages((m) => ({ ...m, [matchId]: '❌ Invalid scores' }));
+      setScoreMessages((m) => ({ ...m, [matchId]: 'Invalid scores' }));
       return;
     }
     const res = await fetch('/api/admin/set-score', {
@@ -93,7 +93,7 @@ export default function AdminPage() {
     const data = await res.json();
     setScoreMessages((m) => ({
       ...m,
-      [matchId]: res.ok ? `✅ Score set. ${data.predictionsUpdated} predictions scored.` : `❌ ${data.error}`,
+      [matchId]: res.ok ? `Score set. ${data.predictionsUpdated} predictions scored.` : (data.error || 'Error'),
     }));
     if (res.ok) fetchMatches();
   }
@@ -123,7 +123,7 @@ export default function AdminPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="text-5xl mb-4">🚫</div>
+          <div className="text-5xl mb-4 text-red-400 font-black">403</div>
           <h1 className="text-2xl font-bold mb-2">Access Denied</h1>
           <p className="text-gray-400">You are not authorized to access this page.</p>
         </div>
@@ -134,14 +134,14 @@ export default function AdminPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h1 className="text-3xl font-black">⚙️ Admin Panel</h1>
+        <h1 className="text-3xl font-black">Admin Panel</h1>
         <div className="flex gap-3">
           <button
             onClick={handleSeed}
             disabled={seeding}
             className="btn-secondary text-sm disabled:opacity-50"
           >
-            {seeding ? 'Seeding...' : '🌱 Seed Fixtures'}
+            {seeding ? 'Seeding...' : 'Seed Fixtures'}
           </button>
           <button
             onClick={handleToggleTournament}
@@ -152,7 +152,7 @@ export default function AdminPage() {
                 : 'bg-red-600 hover:bg-red-700 text-white'
             }`}
           >
-            {tournamentEnded ? '🟢 Tournament Active' : '🔴 End Tournament'}
+            {tournamentEnded ? 'Tournament Active' : 'End Tournament'}
           </button>
         </div>
       </div>

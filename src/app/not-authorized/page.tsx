@@ -4,7 +4,7 @@ export default function NotAuthorizedPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center">
-        <div className="text-7xl mb-6">🔒</div>
+        <div className="text-5xl font-black text-red-400 mb-6">403</div>
         <h1 className="text-3xl font-black mb-4">
           Access <span className="text-red-400">Denied</span>
         </h1>

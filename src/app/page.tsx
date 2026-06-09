@@ -11,16 +11,15 @@ export default async function LandingPage() {
       {/* Top bar */}
       <div className="bg-sb-green-dark border-b border-sb-green/40 px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-xl">⚽</span>
           <span className="text-sb-yellow font-black text-xl tracking-tight">
             INJ<span className="text-white">AFRICA</span>
           </span>
+          <span className="text-[10px] text-white/40 font-medium uppercase mt-0.5">WC2026</span>
         </div>
-        <AuthButton />
       </div>
 
       {/* Hero banner */}
-      <div className="bg-gradient-to-r from-sb-green-dark via-sb-green to-sb-green-dark border-b border-sb-green/40 px-4 py-10 text-center">
+      <div className="bg-gradient-to-r from-sb-green-dark via-sb-green to-sb-green-dark border-b border-sb-green/40 px-4 py-14 text-center">
         <div className="max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 bg-sb-yellow/10 border border-sb-yellow/30 text-sb-yellow text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-sm mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-sb-yellow pulse-live" />
@@ -40,7 +39,7 @@ export default async function LandingPage() {
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Points system */}
         <div className="sb-section-header mb-0 rounded-sm rounded-b-none">
-          ⚡ How Points Work
+          How Points Work
         </div>
         <div className="sb-card rounded-t-none mb-6 grid grid-cols-3 divide-x divide-sb-border">
           <div className="p-5 text-center">
@@ -63,23 +62,15 @@ export default async function LandingPage() {
         {/* Features grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
           {[
-            { icon: '⚽', title: '104 Matches', desc: 'Predict every group stage and knockout match from June to July 2026' },
-            { icon: '📊', title: 'Live Rankings', desc: 'Leaderboard updates instantly as match results come in' },
-            { icon: '🏆', title: 'Top 3 Prizes', desc: 'Tournament winners submit their Injective wallet to claim rewards' },
+            { title: '104 Matches', desc: 'Predict every group stage and knockout match from June to July 2026' },
+            { title: 'Live Rankings', desc: 'Leaderboard updates instantly as match results come in' },
+            { title: 'Top 3 Prizes', desc: 'Tournament winners submit their Injective wallet to claim rewards' },
           ].map((f) => (
             <div key={f.title} className="sb-card p-4">
-              <div className="text-2xl mb-2">{f.icon}</div>
               <div className="text-white font-bold text-sm mb-1">{f.title}</div>
               <div className="text-sb-muted text-xs leading-relaxed">{f.desc}</div>
             </div>
           ))}
-        </div>
-
-        {/* CTA */}
-        <div className="sb-card p-6 text-center border-sb-yellow/20">
-          <p className="text-white font-bold text-lg mb-1">Ready to play?</p>
-          <p className="text-sb-muted text-sm mb-4">Sign in with Discord to register and start predicting</p>
-          <AuthButton />
         </div>
       </div>
     </div>

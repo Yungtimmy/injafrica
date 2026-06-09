@@ -26,7 +26,7 @@ export default async function LeaderboardPage() {
 
   return (
     <div className="max-w-3xl mx-auto px-3 py-6">
-      <div className="sb-section-header rounded-sm mb-4">🏆 Leaderboard · WC2026 Predictor</div>
+      <div className="sb-section-header rounded-sm mb-4">Leaderboard · WC2026 Predictor</div>
 
       {/* Top 3 podium */}
       {entries.length >= 3 && (
@@ -43,7 +43,6 @@ export default async function LeaderboardPage() {
             </div>
             {/* 1st */}
             <div className="flex flex-col items-center gap-1 -mb-px">
-              <span className="text-2xl">👑</span>
               <Image src={entries[0].avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'} alt={entries[0].username} width={56} height={56} className="rounded-full border-2 border-sb-yellow" />
               <span className="text-xs font-bold text-white truncate max-w-[80px] text-center">{entries[0].username}</span>
               <span className="text-sb-yellow font-black">{entries[0].points} pts</span>

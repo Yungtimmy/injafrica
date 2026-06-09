@@ -26,7 +26,6 @@ export default function Navbar() {
         <div className="max-w-7xl mx-auto px-3 h-12 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href={session ? '/dashboard' : '/'} className="flex items-center gap-2 shrink-0">
-            <span className="text-xl">⚽</span>
             <span className="text-sb-yellow font-black text-lg tracking-tight leading-none">
               INJ<span className="text-white">AFRICA</span>
             </span>

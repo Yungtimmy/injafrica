@@ -129,7 +129,7 @@ export default async function DashboardPage() {
           {/* Upcoming */}
           <div>
             <div className="sb-section-header rounded-sm mb-px flex items-center justify-between">
-              <span>⚽ Upcoming Matches</span>
+              <span>Upcoming Matches</span>
               <Link href="/matches" className="text-sb-yellow text-[10px] font-bold uppercase tracking-wider hover:underline">
                 View All
               </Link>
@@ -156,12 +156,11 @@ export default async function DashboardPage() {
           <div className="sb-card overflow-hidden">
             <div className="sb-section-header">Quick Nav</div>
             {[
-              { href: '/matches', icon: '⚽', label: 'All Matches' },
-              { href: '/leaderboard', icon: '🏆', label: 'Leaderboard' },
-              { href: '/profile', icon: '👤', label: 'My Profile & Wallet' },
+              { href: '/matches', label: 'All Matches' },
+              { href: '/leaderboard', label: 'Leaderboard' },
+              { href: '/profile', label: 'My Profile & Wallet' },
             ].map((l) => (
               <Link key={l.href} href={l.href} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border text-sm text-white hover:bg-sb-card-2 transition-colors">
-                <span>{l.icon}</span>
                 <span className="font-medium">{l.label}</span>
                 <span className="ml-auto text-sb-muted">›</span>
               </Link>

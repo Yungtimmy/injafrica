@@ -84,11 +84,11 @@ export default function ProfilePage() {
       const data = await res.json();
       if (res.ok) {
         setSavedWallet(addr);
-        setWalletMessage('✅ Wallet address saved!');
+        setWalletMessage('Wallet address saved!');
       } else {
-        setWalletMessage(`❌ ${data.error || 'Failed to save'}`);
+        setWalletMessage(data.error || 'Failed to save');
       }
-    } catch { setWalletMessage('❌ Network error'); }
+    } catch { setWalletMessage('Network error'); }
     finally { setWalletSubmitting(false); }
   }
 
@@ -152,7 +152,7 @@ export default function ProfilePage() {
 
       {/* Wallet section */}
       <div className="sb-card overflow-hidden">
-        <div className="sb-section-header">💼 Injective Wallet Address</div>
+        <div className="sb-section-header">Injective Wallet Address</div>
         <div className="p-4">
           {savedWallet && (
             <div className="mb-3 flex items-center gap-2 bg-sb-bg border border-sb-border rounded-sm px-3 py-2">
@@ -191,14 +191,14 @@ export default function ProfilePage() {
       {tournamentEnded && userRank !== null && userRank <= 3 && (
         <div className="sb-card p-4 border-l-4 border-l-sb-yellow bg-sb-yellow/5">
           <p className="text-sb-yellow font-bold text-sm">
-            🏆 You finished #{userRank} — make sure your wallet above is correct to claim your prize!
+            You finished #{userRank} — make sure your wallet above is correct to claim your prize!
           </p>
         </div>
       )}
 
       {/* Predictions history */}
       <div className="sb-card overflow-hidden">
-        <div className="sb-section-header">📋 Predictions History</div>
+        <div className="sb-section-header">Predictions History</div>
         {predictions.length === 0 ? (
           <div className="p-8 text-center text-sb-muted text-sm">No predictions yet</div>
         ) : (
