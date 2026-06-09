@@ -18,8 +18,8 @@ export async function POST() {
   try {
     await dbConnect();
 
-    // Wipe all existing matches and reseed fresh
-    await Match.deleteMany({});
+    // Wipe only group stage matches so knockout matches are preserved
+    await Match.deleteMany({ stage: 'Group Stage' });
     await Match.insertMany(wc2026Fixtures);
 
     return NextResponse.json({

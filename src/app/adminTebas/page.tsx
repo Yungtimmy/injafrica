@@ -80,15 +80,18 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (!session) return;
-    const adminIds = (process.env.NEXT_PUBLIC_ADMIN_DISCORD_IDS || '').split(',');
-    const isAdminUser = adminIds.includes(session.user?.discordId ?? '');
-    setIsAdmin(isAdminUser);
-    if (isAdminUser) {
-      fetchMatches();
-      fetchTournamentStatus();
-    } else {
-      setLoading(false);
-    }
+    fetch('/api/admin/me')
+      .then((r) => r.json())
+      .then(({ isAdmin: adminResult }) => {
+        setIsAdmin(adminResult);
+        if (adminResult) {
+          fetchMatches();
+          fetchTournamentStatus();
+        } else {
+          setLoading(false);
+        }
+      })
+      .catch(() => setLoading(false));
   }, [session]);
 
   async function fetchMatches() {
@@ -106,7 +109,7 @@ export default function AdminPage() {
   }
 
   async function handleSeed() {
-    if (!confirm('This will wipe all group stage fixtures and reseed. Continue?')) return;
+    if (!confirm('This will wipe and reseed all Group Stage fixtures. Knockout matches you added manually will NOT be affected. Continue?')) return;
     setSeeding(true);
     setSeedMsg('');
     const res = await fetch('/api/admin/seed', { method: 'POST' });
