@@ -9,22 +9,22 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: '#5C4EFF',
-        'primary-dark': '#4438e0',
-        'primary-light': '#7B6FFF',
-        gold: '#FFD700',
-        'gold-dark': '#E6C200',
-        pitch: '#1a3a2a',
-        'pitch-light': '#2d5a3d',
-        dark: '#0a0a0f',
-        'dark-card': '#12121a',
-        'dark-border': '#1e1e2e',
+        sb: {
+          green:      '#006633',
+          'green-dark': '#004d26',
+          'green-light': '#007a3d',
+          yellow:     '#f5c000',
+          'yellow-dark': '#d4a800',
+          bg:         '#0d130e',
+          card:       '#162119',
+          'card-2':   '#1e2e22',
+          border:     '#2a3f2e',
+          muted:      '#6b8070',
+          live:       '#e53935',
+        },
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
     },
   },

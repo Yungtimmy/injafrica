@@ -9,111 +9,101 @@ interface MatchCardProps {
   discordId?: string;
 }
 
-export default function MatchCard({
-  match,
-  prediction,
-  showPredictionForm = false,
-  discordId: _discordId,
-}: MatchCardProps) {
+export default function MatchCard({ match, prediction, showPredictionForm = false }: MatchCardProps) {
   const isFinished = match.status === 'finished';
   const isLive = match.status === 'live';
-
   const matchDate = new Date(match.matchDate);
   const isPast = matchDate < new Date();
-
   const canPredict = showPredictionForm && !isFinished && !isLive && !isPast;
 
+  const pointsColor =
+    prediction?.pointsEarned === 5 ? 'text-sb-yellow' :
+    prediction?.pointsEarned && prediction.pointsEarned > 0 ? 'text-green-400' :
+    prediction?.pointsEarned === 0 ? 'text-red-400' : 'text-sb-muted';
+
   return (
-    <div
-      className={`card p-4 transition-all hover:border-primary/30 ${
-        isLive ? 'border-red-500/50 pulse-glow' : ''
-      }`}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-3 text-xs text-gray-500">
-        <span className="uppercase tracking-wider font-semibold">
-          {match.stage === 'Group Stage' ? `Group ${match.group}` : match.stage}
+    <div className={`sb-card mb-px ${isLive ? 'border-l-2 border-l-sb-live' : ''}`}>
+      {/* Stage / time strip */}
+      <div className="flex items-center justify-between px-3 py-1.5 border-b border-sb-border bg-sb-card-2">
+        <span className="text-[10px] font-bold uppercase text-sb-muted tracking-wider">
+          {match.stage === 'Group Stage' ? `Group ${match.group}` : match.stage} · {match.city}
         </span>
         <div className="flex items-center gap-2">
           {isLive && (
-            <span className="flex items-center gap-1 text-red-400 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-              LIVE
+            <span className="flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-sb-live pulse-live" />
+              <span className="text-[10px] font-black text-sb-live uppercase">Live</span>
             </span>
           )}
-          {isFinished && <span className="text-gray-500">FT</span>}
+          {isFinished && <span className="text-[10px] text-sb-muted font-semibold uppercase">FT</span>}
           {!isFinished && !isLive && (
-            <span>{format(matchDate, 'MMM d, HH:mm')}</span>
+            <span className="text-[10px] text-sb-muted">
+              {format(matchDate, 'dd MMM · HH:mm')}
+            </span>
           )}
         </div>
       </div>
 
-      {/* Teams and score */}
-      <div className="flex items-center justify-between gap-3">
+      {/* Teams + score */}
+      <div className="flex items-center px-3 py-3 gap-2">
+        {/* Home */}
         <div className="flex-1 text-right">
-          <span className="font-semibold text-sm sm:text-base">{match.homeTeam}</span>
+          <span className="font-bold text-sm text-white leading-tight">{match.homeTeam}</span>
         </div>
 
-        <div className="flex items-center gap-2 min-w-[80px] justify-center">
+        {/* Score / VS */}
+        <div className="flex items-center gap-1 min-w-[72px] justify-center">
           {isFinished || isLive ? (
-            <div className="flex items-center gap-1.5 bg-dark rounded-lg px-3 py-1">
-              <span className="text-lg font-black text-white">{match.homeScore ?? '–'}</span>
-              <span className="text-gray-600">:</span>
-              <span className="text-lg font-black text-white">{match.awayScore ?? '–'}</span>
+            <div className="flex items-center gap-1">
+              <span className={`text-xl font-black w-7 text-center ${isLive ? 'text-sb-live' : 'text-white'}`}>
+                {match.homeScore ?? 0}
+              </span>
+              <span className="text-sb-muted font-bold">:</span>
+              <span className={`text-xl font-black w-7 text-center ${isLive ? 'text-sb-live' : 'text-white'}`}>
+                {match.awayScore ?? 0}
+              </span>
             </div>
           ) : (
-            <div className="text-gray-600 text-sm font-medium">vs</div>
+            <div className="bg-sb-green/20 border border-sb-green/40 text-sb-green text-xs font-black px-3 py-1 rounded-sm">
+              VS
+            </div>
           )}
         </div>
 
+        {/* Away */}
         <div className="flex-1 text-left">
-          <span className="font-semibold text-sm sm:text-base">{match.awayTeam}</span>
+          <span className="font-bold text-sm text-white leading-tight">{match.awayTeam}</span>
         </div>
       </div>
 
-      {/* Venue */}
-      <div className="mt-2 text-xs text-gray-600 text-center">
-        📍 {match.city}
-      </div>
+      {/* Prediction row */}
+      {(prediction || canPredict || (!canPredict && !prediction && !isFinished && !isLive && isPast)) && (
+        <div className="border-t border-sb-border px-3 py-2 bg-sb-card-2/50">
+          {prediction && (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs text-sb-muted">
+                <span>Your pick:</span>
+                <span className="text-white font-bold">
+                  {prediction.predictedHome} – {prediction.predictedAway}
+                </span>
+              </div>
+              {prediction.pointsEarned !== null ? (
+                <span className={`text-xs font-black ${pointsColor}`}>
+                  +{prediction.pointsEarned} PTS
+                </span>
+              ) : (
+                <span className="text-[10px] text-sb-muted uppercase">Pending</span>
+              )}
+            </div>
+          )}
 
-      {/* Prediction display or form */}
-      {prediction && (
-        <div className="mt-3 pt-3 border-t border-dark-border flex items-center justify-between">
-          <span className="text-xs text-gray-500">Your prediction:</span>
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-bold text-gray-300">
-              {prediction.predictedHome}–{prediction.predictedAway}
-            </span>
-            {prediction.pointsEarned !== null && (
-              <span
-                className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                  prediction.pointsEarned === 5
-                    ? 'bg-gold/20 text-gold'
-                    : prediction.pointsEarned > 0
-                    ? 'bg-green-500/20 text-green-400'
-                    : 'bg-red-500/20 text-red-400'
-                }`}
-              >
-                +{prediction.pointsEarned} pts
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+          {canPredict && (
+            <PredictionForm matchId={match._id} existingPrediction={prediction} />
+          )}
 
-      {canPredict && (
-        <div className="mt-3 pt-3 border-t border-dark-border">
-          <div className="text-xs text-gray-500 mb-1.5">Your prediction:</div>
-          <PredictionForm
-            matchId={match._id}
-            existingPrediction={prediction}
-          />
-        </div>
-      )}
-
-      {!canPredict && !prediction && !isFinished && !isLive && isPast && (
-        <div className="mt-3 pt-3 border-t border-dark-border text-xs text-gray-600 text-center">
-          Prediction window closed
+          {!canPredict && !prediction && isPast && !isFinished && !isLive && (
+            <span className="text-[10px] text-sb-muted uppercase">Prediction closed</span>
+          )}
         </div>
       )}
     </div>

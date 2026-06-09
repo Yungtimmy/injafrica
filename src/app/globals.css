@@ -4,84 +4,59 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
-:root {
-  --background: #0a0a0f;
-  --foreground: #f0f0f5;
-}
-
 * {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-html,
-body {
+html, body {
   max-width: 100vw;
   overflow-x: hidden;
-  background: var(--background);
-  color: var(--foreground);
+  background: #0d130e;
+  color: #e8f0ea;
   font-family: 'Inter', system-ui, sans-serif;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+a { color: inherit; text-decoration: none; }
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0d130e; }
+::-webkit-scrollbar-thumb { background: #2a3f2e; border-radius: 2px; }
+
+/* ── Components ── */
+.sb-card {
+  @apply bg-sb-card border border-sb-border rounded-sm;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: #12121a;
-}
-::-webkit-scrollbar-thumb {
-  background: #5C4EFF;
-  border-radius: 3px;
+.sb-card-2 {
+  @apply bg-sb-card-2 border border-sb-border rounded-sm;
 }
 
-/* Utility classes */
-.card {
-  @apply bg-dark-card border border-dark-border rounded-xl;
+.sb-btn {
+  @apply bg-sb-yellow hover:bg-sb-yellow-dark text-black font-bold px-5 py-2.5 rounded-sm text-sm uppercase tracking-wide transition-colors;
 }
 
-.btn-primary {
-  @apply bg-primary hover:bg-primary-dark text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200;
+.sb-btn-outline {
+  @apply border border-sb-green text-sb-green hover:bg-sb-green hover:text-white font-bold px-5 py-2.5 rounded-sm text-sm uppercase tracking-wide transition-colors;
 }
 
-.btn-secondary {
-  @apply bg-dark-card border border-dark-border hover:border-primary text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200;
+.sb-badge-live {
+  @apply bg-sb-live text-white text-[10px] font-black uppercase px-1.5 py-0.5 rounded-sm;
 }
 
-.gradient-text {
-  @apply bg-gradient-to-r from-primary to-gold bg-clip-text text-transparent;
+.sb-section-header {
+  @apply bg-sb-green-dark text-white text-xs font-bold uppercase tracking-widest px-4 py-2 flex items-center gap-2;
 }
 
-/* Animations */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+/* ── Match row style ── */
+.match-row {
+  @apply flex items-center border-b border-sb-border hover:bg-sb-card-2 transition-colors cursor-default;
 }
 
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 10px rgba(92, 78, 255, 0.4); }
-  50% { box-shadow: 0 0 25px rgba(92, 78, 255, 0.8); }
+/* ── Animations ── */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
-
-.fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.pulse-glow {
-  animation: pulse-glow 2s infinite;
-}
-
-/* Football field pattern */
-.pitch-bg {
-  background-color: #0d2416;
-  background-image:
-    linear-gradient(rgba(26, 58, 42, 0.5) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(26, 58, 42, 0.5) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
+.pulse-live { animation: pulse-live 1.2s ease-in-out infinite; }

@@ -72,138 +72,141 @@ export default async function DashboardPage() {
     await getDashboardData(session.user.discordId);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Welcome header */}
-      <div className="card p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+    <div className="max-w-7xl mx-auto px-3 py-4">
+      {/* User stats bar */}
+      <div className="sb-card mb-4 px-4 py-3 flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
           <Image
-            src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
+            src={session.user?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}
             alt={session.user?.username ?? 'User'}
-            width={56}
-            height={56}
-            className="rounded-full border-2 border-primary"
+            width={36}
+            height={36}
+            className="rounded-full border-2 border-sb-yellow/50"
           />
           <div>
-            <h1 className="text-xl font-bold">
-              Welcome, <span className="text-primary">{session.user?.username}</span>!
-            </h1>
-            <p className="text-sm text-gray-400">Ready to predict some matches?</p>
+            <div className="font-bold text-white text-sm">{session.user?.username}</div>
+            <div className="text-sb-muted text-xs">WC2026 Predictor</div>
           </div>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4">
           <div className="text-center">
-            <div className="text-3xl font-black text-gold">{session.user?.points ?? 0}</div>
-            <div className="text-xs text-gray-400">Total Points</div>
+            <div className="text-xl font-black text-sb-yellow">{session.user?.points ?? 0}</div>
+            <div className="text-[10px] text-sb-muted uppercase">Points</div>
           </div>
           {userRank && (
             <div className="text-center">
-              <div className="text-3xl font-black text-primary">#{userRank}</div>
-              <div className="text-xs text-gray-400">Rank</div>
+              <div className="text-xl font-black text-white">#{userRank}</div>
+              <div className="text-[10px] text-sb-muted uppercase">Rank</div>
             </div>
           )}
+          <Link href="/leaderboard" className="sb-btn text-xs px-3 py-2 hidden sm:block">
+            Leaderboard
+          </Link>
         </div>
       </div>
 
-      {/* Live matches */}
-      {liveMatches.length > 0 && (
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <h2 className="text-lg font-bold">Live Now</h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {liveMatches.map((match) => (
-              <MatchCard
-                key={match._id.toString()}
-                match={match}
-                prediction={predMap[match._id.toString()]}
-                showPredictionForm={false}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Upcoming matches */}
-        <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Upcoming Matches</h2>
-            <Link href="/matches" className="text-sm text-primary hover:text-primary-light transition-colors">
-              View all →
-            </Link>
-          </div>
-          {upcomingMatches.length === 0 ? (
-            <div className="card p-8 text-center text-gray-500">
-              No upcoming matches scheduled
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Main: matches */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Live */}
+          {liveMatches.length > 0 && (
+            <div>
+              <div className="sb-section-header rounded-sm mb-px">
+                <span className="w-2 h-2 rounded-full bg-sb-live pulse-live" />
+                Live Matches
+              </div>
+              {liveMatches.map((match) => (
+                <MatchCard
+                  key={match._id.toString()}
+                  match={match}
+                  prediction={predMap[match._id.toString()]}
+                  showPredictionForm={false}
+                />
+              ))}
             </div>
-          ) : (
-            <div className="space-y-3">
-              {upcomingMatches.map((match) => (
+          )}
+
+          {/* Upcoming */}
+          <div>
+            <div className="sb-section-header rounded-sm mb-px flex items-center justify-between">
+              <span>⚽ Upcoming Matches</span>
+              <Link href="/matches" className="text-sb-yellow text-[10px] font-bold uppercase tracking-wider hover:underline">
+                View All
+              </Link>
+            </div>
+            {upcomingMatches.length === 0 ? (
+              <div className="sb-card p-8 text-center text-sb-muted text-sm">No upcoming matches scheduled</div>
+            ) : (
+              upcomingMatches.map((match) => (
                 <MatchCard
                   key={match._id.toString()}
                   match={match}
                   prediction={predMap[match._id.toString()]}
                   showPredictionForm={true}
-                  discordId={session.user.discordId}
+                  discordId={session.user?.discordId}
                 />
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
 
-        {/* Recent results */}
-        <div>
-          <h2 className="text-lg font-bold mb-4">Recent Predictions</h2>
-          {recentPredictions.length === 0 ? (
-            <div className="card p-6 text-center text-gray-500 text-sm">
-              No predictions yet.<br />Start predicting to earn points!
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {recentPredictions.map((pred) => {
+        {/* Sidebar */}
+        <div className="space-y-4">
+          {/* Quick nav */}
+          <div className="sb-card overflow-hidden">
+            <div className="sb-section-header">Quick Nav</div>
+            {[
+              { href: '/matches', icon: '⚽', label: 'All Matches' },
+              { href: '/leaderboard', icon: '🏆', label: 'Leaderboard' },
+              { href: '/profile', icon: '👤', label: 'My Profile & Wallet' },
+            ].map((l) => (
+              <Link key={l.href} href={l.href} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border text-sm text-white hover:bg-sb-card-2 transition-colors">
+                <span>{l.icon}</span>
+                <span className="font-medium">{l.label}</span>
+                <span className="ml-auto text-sb-muted">›</span>
+              </Link>
+            ))}
+          </div>
+
+          {/* Recent predictions */}
+          <div className="sb-card overflow-hidden">
+            <div className="sb-section-header">Recent Results</div>
+            {recentPredictions.length === 0 ? (
+              <div className="p-6 text-center text-sb-muted text-xs">No scored predictions yet</div>
+            ) : (
+              recentPredictions.map((pred) => {
                 const match = pred.matchId as unknown as IMatch;
+                const pts = pred.pointsEarned;
                 return (
-                  <div key={pred._id.toString()} className="card p-4">
-                    <div className="text-xs text-gray-500 mb-1">
-                      {match?.homeTeam} vs {match?.awayTeam}
+                  <div key={pred._id.toString()} className="flex items-center justify-between px-4 py-2.5 border-b border-sb-border hover:bg-sb-card-2">
+                    <div>
+                      <div className="text-xs text-white font-medium">
+                        {match?.homeTeam} {pred.predictedHome}–{pred.predictedAway} {match?.awayTeam}
+                      </div>
+                      <div className="text-[10px] text-sb-muted">Your pick</div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-300">
-                        Your pick: {pred.predictedHome}–{pred.predictedAway}
-                      </span>
-                      <span
-                        className={`text-sm font-bold ${
-                          pred.pointsEarned === 5
-                            ? 'text-gold'
-                            : pred.pointsEarned && pred.pointsEarned > 0
-                            ? 'text-green-400'
-                            : 'text-red-400'
-                        }`}
-                      >
-                        {pred.pointsEarned !== null ? `+${pred.pointsEarned} pts` : '—'}
-                      </span>
-                    </div>
+                    <span className={`text-sm font-black ${pts === 5 ? 'text-sb-yellow' : pts && pts > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      {pts !== null ? `+${pts}` : '—'}
+                    </span>
                   </div>
                 );
-              })}
-            </div>
-          )}
+              })
+            )}
+          </div>
 
-          {/* Quick stats */}
-          <div className="mt-6 card p-4">
-            <h3 className="font-semibold mb-3 text-sm text-gray-400">Quick Links</h3>
-            <div className="space-y-2">
-              <Link href="/leaderboard" className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors py-1">
-                🏆 Leaderboard
-              </Link>
-              <Link href="/matches" className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors py-1">
-                ⚽ All Matches
-              </Link>
-              <Link href="/profile" className="flex items-center gap-2 text-sm text-white hover:text-primary transition-colors py-1">
-                👤 My Profile
-              </Link>
-            </div>
+          {/* Points guide */}
+          <div className="sb-card overflow-hidden">
+            <div className="sb-section-header">Points Guide</div>
+            {[
+              { pts: 5, label: 'Exact Score', color: 'text-sb-yellow' },
+              { pts: 3, label: 'Correct Draw', color: 'text-green-400' },
+              { pts: 1, label: 'Correct Winner', color: 'text-white' },
+            ].map((g) => (
+              <div key={g.pts} className="flex items-center justify-between px-4 py-2.5 border-b border-sb-border last:border-0">
+                <span className="text-xs text-sb-muted">{g.label}</span>
+                <span className={`font-black text-sm ${g.color}`}>+{g.pts} pts</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

@@ -8,10 +8,10 @@ import AuthButton from './AuthButton';
 import { useState } from 'react';
 
 const NAV_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/matches', label: 'Matches' },
+  { href: '/dashboard', label: 'Home' },
+  { href: '/matches',   label: 'Matches' },
   { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/profile', label: 'Profile' },
+  { href: '/profile',  label: 'My Account' },
 ];
 
 export default function Navbar() {
@@ -19,30 +19,84 @@ export default function Navbar() {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  if (!session && (pathname === '/' || pathname === '/not-authorized')) {
-    return null;
-  }
-
   return (
-    <nav className="sticky top-0 z-50 bg-dark-card/90 backdrop-blur-md border-b border-dark-border">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        {/* Logo */}
-        <Link href={session ? '/dashboard' : '/'} className="flex items-center gap-2 font-black text-lg">
-          <span className="text-2xl">⚽</span>
-          <span className="gradient-text hidden sm:block">WC2026</span>
-        </Link>
+    <>
+      {/* Top bar */}
+      <nav className="sticky top-0 z-50 bg-sb-green-dark border-b border-sb-green/40 shadow-lg">
+        <div className="max-w-7xl mx-auto px-3 h-12 flex items-center justify-between gap-4">
+          {/* Logo */}
+          <Link href={session ? '/dashboard' : '/'} className="flex items-center gap-2 shrink-0">
+            <span className="text-xl">⚽</span>
+            <span className="text-sb-yellow font-black text-lg tracking-tight leading-none">
+              INJ<span className="text-white">AFRICA</span>
+            </span>
+            <span className="hidden sm:block text-[10px] text-white/50 font-medium uppercase mt-0.5">WC2026</span>
+          </Link>
 
-        {/* Desktop nav */}
-        {session && (
-          <div className="hidden md:flex items-center gap-1">
+          {/* Desktop nav */}
+          {session && (
+            <div className="hidden md:flex items-center">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`px-4 h-12 flex items-center text-sm font-semibold uppercase tracking-wide border-b-2 transition-colors ${
+                    pathname === link.href
+                      ? 'border-sb-yellow text-sb-yellow'
+                      : 'border-transparent text-white/70 hover:text-white hover:border-white/30'
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          )}
+
+          {/* Right */}
+          <div className="flex items-center gap-2 shrink-0">
+            {session ? (
+              <>
+                <div className="hidden sm:flex items-center gap-1.5 bg-sb-green/30 border border-sb-green px-3 py-1 rounded-sm">
+                  <span className="text-sb-yellow font-black text-sm">{session.user?.points ?? 0}</span>
+                  <span className="text-white/50 text-xs">PTS</span>
+                </div>
+                <Link href="/profile">
+                  <Image
+                    src={session.user?.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}
+                    alt={session.user?.username ?? 'User'}
+                    width={28}
+                    height={28}
+                    className="rounded-full border-2 border-sb-yellow/60"
+                  />
+                </Link>
+                <AuthButton />
+                <button
+                  onClick={() => setMobileOpen(!mobileOpen)}
+                  className="md:hidden text-white p-1"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    {mobileOpen
+                      ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+                  </svg>
+                </button>
+              </>
+            ) : (
+              <AuthButton />
+            )}
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        {session && mobileOpen && (
+          <div className="md:hidden bg-sb-green-dark border-t border-sb-green/40">
             {NAV_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  pathname === link.href
-                    ? 'bg-primary/20 text-primary'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                onClick={() => setMobileOpen(false)}
+                className={`block px-4 py-3 text-sm font-semibold uppercase border-b border-sb-border ${
+                  pathname === link.href ? 'text-sb-yellow bg-sb-green/20' : 'text-white/70'
                 }`}
               >
                 {link.label}
@@ -50,60 +104,24 @@ export default function Navbar() {
             ))}
           </div>
         )}
+      </nav>
 
-        {/* Right side */}
-        <div className="flex items-center gap-3">
-          {session ? (
-            <>
-              <div className="hidden sm:flex items-center gap-2">
-                <span className="text-gold font-bold text-sm">{session.user?.points ?? 0} pts</span>
-              </div>
-              <Image
-                src={session.user?.avatar || `https://cdn.discordapp.com/embed/avatars/0.png`}
-                alt={session.user?.username ?? 'User'}
-                width={32}
-                height={32}
-                className="rounded-full border border-dark-border"
-              />
-              <AuthButton />
-
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setMobileOpen(!mobileOpen)}
-                className="md:hidden p-2 text-gray-400 hover:text-white"
+      {/* Secondary strip — sport tabs look */}
+      {session && (
+        <div className="bg-sb-card border-b border-sb-border">
+          <div className="max-w-7xl mx-auto px-3 flex items-center gap-1 h-9 overflow-x-auto no-scrollbar">
+            {['Group Stage', 'Round of 16', 'Quarter-finals', 'Semi-finals', 'Final'].map((s) => (
+              <Link
+                key={s}
+                href="/matches"
+                className="shrink-0 px-3 py-1 text-xs font-semibold text-sb-muted hover:text-white hover:bg-sb-card-2 rounded-sm transition-colors whitespace-nowrap"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  {mobileOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </>
-          ) : (
-            <AuthButton />
-          )}
-        </div>
-      </div>
-
-      {/* Mobile menu */}
-      {session && mobileOpen && (
-        <div className="md:hidden border-t border-dark-border bg-dark-card">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className={`block px-4 py-3 text-sm font-medium border-b border-dark-border/50 ${
-                pathname === link.href ? 'text-primary bg-primary/10' : 'text-gray-400'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+                {s}
+              </Link>
+            ))}
+          </div>
         </div>
       )}
-    </nav>
+    </>
   );
 }

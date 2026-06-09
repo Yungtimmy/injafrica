@@ -4,81 +4,82 @@ import AuthButton from '@/components/AuthButton';
 
 export default async function LandingPage() {
   const session = await auth();
-  if (session) {
-    redirect('/dashboard');
-  }
+  if (session) redirect('/dashboard');
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 pitch-bg opacity-30" />
-      <div className="absolute inset-0 bg-gradient-to-br from-dark via-dark/95 to-pitch/40" />
-
-      {/* Decorative circles */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 text-center">
-        {/* Trophy icon */}
-        <div className="mb-6 text-7xl animate-bounce">🏆</div>
-
-        {/* Title */}
-        <h1 className="text-5xl md:text-7xl font-black mb-4 leading-tight">
-          <span className="gradient-text">World Cup 2026</span>
-          <br />
-          <span className="text-white">Predictor</span>
-        </h1>
-
-        <p className="text-xl md:text-2xl text-gray-400 mb-4 max-w-2xl">
-          Predict match scores, earn points, and climb the leaderboard
-          with the <span className="text-primary font-semibold">Injective</span> community.
-        </p>
-
-        <div className="flex items-center gap-2 mb-10 text-sm text-gray-500">
-          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse inline-block" />
-          <span>48 Teams · 104 Matches · June–July 2026</span>
+    <div className="min-h-screen bg-sb-bg">
+      {/* Top bar */}
+      <div className="bg-sb-green-dark border-b border-sb-green/40 px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-xl">⚽</span>
+          <span className="text-sb-yellow font-black text-xl tracking-tight">
+            INJ<span className="text-white">AFRICA</span>
+          </span>
         </div>
-
-        {/* Points system */}
-        <div className="grid grid-cols-3 gap-4 mb-10 max-w-lg w-full">
-          <div className="card p-4 text-center">
-            <div className="text-3xl font-black text-gold mb-1">5</div>
-            <div className="text-xs text-gray-400">Exact Score</div>
-          </div>
-          <div className="card p-4 text-center">
-            <div className="text-3xl font-black text-primary mb-1">3</div>
-            <div className="text-xs text-gray-400">Correct Draw</div>
-          </div>
-          <div className="card p-4 text-center">
-            <div className="text-3xl font-black text-green-400 mb-1">1</div>
-            <div className="text-xs text-gray-400">Correct Winner</div>
-          </div>
-        </div>
-
-        {/* Login button */}
         <AuthButton />
+      </div>
 
-        <p className="mt-4 text-xs text-gray-600">
-          Members of the Injective Discord server only
-        </p>
+      {/* Hero banner */}
+      <div className="bg-gradient-to-r from-sb-green-dark via-sb-green to-sb-green-dark border-b border-sb-green/40 px-4 py-10 text-center">
+        <div className="max-w-2xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-sb-yellow/10 border border-sb-yellow/30 text-sb-yellow text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-sm mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-sb-yellow pulse-live" />
+            FIFA World Cup 2026 · 48 Teams
+          </div>
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-3 leading-tight">
+            PREDICT. SCORE. <span className="text-sb-yellow">WIN.</span>
+          </h1>
+          <p className="text-white/60 text-sm md:text-base mb-8 max-w-md mx-auto">
+            Make score predictions for every World Cup 2026 match, earn points, and compete for prizes on the Injective leaderboard.
+          </p>
+          <AuthButton />
+          <p className="mt-3 text-white/30 text-xs">Free to play · Discord login required</p>
+        </div>
+      </div>
 
-        {/* Features */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16 max-w-3xl w-full">
-          <div className="card p-6 text-left">
-            <div className="text-2xl mb-3">⚽</div>
-            <h3 className="font-bold mb-2">Predict Matches</h3>
-            <p className="text-sm text-gray-400">Submit score predictions before kickoff for all 104 World Cup matches</p>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Points system */}
+        <div className="sb-section-header mb-0 rounded-sm rounded-b-none">
+          ⚡ How Points Work
+        </div>
+        <div className="sb-card rounded-t-none mb-6 grid grid-cols-3 divide-x divide-sb-border">
+          <div className="p-5 text-center">
+            <div className="text-4xl font-black text-sb-yellow mb-1">5</div>
+            <div className="text-white font-bold text-sm mb-1">Exact Score</div>
+            <div className="text-sb-muted text-xs">Predict the precise final score</div>
           </div>
-          <div className="card p-6 text-left">
-            <div className="text-2xl mb-3">📊</div>
-            <h3 className="font-bold mb-2">Track Points</h3>
-            <p className="text-sm text-gray-400">Earn up to 5 points per match and watch your ranking climb in real-time</p>
+          <div className="p-5 text-center">
+            <div className="text-4xl font-black text-green-400 mb-1">3</div>
+            <div className="text-white font-bold text-sm mb-1">Correct Draw</div>
+            <div className="text-sb-muted text-xs">Predict a draw (wrong score)</div>
           </div>
-          <div className="card p-6 text-left">
-            <div className="text-2xl mb-3">🎯</div>
-            <h3 className="font-bold mb-2">Win Rewards</h3>
-            <p className="text-sm text-gray-400">Top 3 predictors at the end of the tournament win exclusive prizes</p>
+          <div className="p-5 text-center">
+            <div className="text-4xl font-black text-white mb-1">1</div>
+            <div className="text-white font-bold text-sm mb-1">Correct Winner</div>
+            <div className="text-sb-muted text-xs">Pick the right winning team</div>
           </div>
+        </div>
+
+        {/* Features grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
+          {[
+            { icon: '⚽', title: '104 Matches', desc: 'Predict every group stage and knockout match from June to July 2026' },
+            { icon: '📊', title: 'Live Rankings', desc: 'Leaderboard updates instantly as match results come in' },
+            { icon: '🏆', title: 'Top 3 Prizes', desc: 'Tournament winners submit their Injective wallet to claim rewards' },
+          ].map((f) => (
+            <div key={f.title} className="sb-card p-4">
+              <div className="text-2xl mb-2">{f.icon}</div>
+              <div className="text-white font-bold text-sm mb-1">{f.title}</div>
+              <div className="text-sb-muted text-xs leading-relaxed">{f.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <div className="sb-card p-6 text-center border-sb-yellow/20">
+          <p className="text-white font-bold text-lg mb-1">Ready to play?</p>
+          <p className="text-sb-muted text-sm mb-4">Sign in with Discord to register and start predicting</p>
+          <AuthButton />
         </div>
       </div>
     </div>
