@@ -8,16 +8,6 @@ export default async function LandingPage() {
 
   return (
     <div className="min-h-screen bg-sb-bg">
-      {/* Top bar */}
-      <div className="bg-sb-green-dark border-b border-sb-green/40 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className="text-sb-yellow font-black text-xl tracking-tight">
-            INJ<span className="text-white">AFRICA</span>
-          </span>
-          <span className="text-[10px] text-white/40 font-medium uppercase mt-0.5">WC2026</span>
-        </div>
-      </div>
-
       {/* Hero banner */}
       <div className="bg-gradient-to-r from-sb-green-dark via-sb-green to-sb-green-dark border-b border-sb-green/40 px-4 py-14 text-center">
         <div className="max-w-2xl mx-auto">
@@ -31,7 +21,9 @@ export default async function LandingPage() {
           <p className="text-white/60 text-sm md:text-base mb-8 max-w-md mx-auto">
             Make score predictions for every World Cup 2026 match, earn points, and compete for prizes on the Injective leaderboard.
           </p>
-          <AuthButton />
+          <div className="flex justify-center">
+            <AuthButton />
+          </div>
           <p className="mt-3 text-white/30 text-xs">Free to play · Discord login required</p>
         </div>
       </div>
