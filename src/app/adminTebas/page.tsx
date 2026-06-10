@@ -60,6 +60,7 @@ export default function AdminPage() {
   const [seeding, setSeeding] = useState(false);
   const [tournamentEnded, setTournamentEnded] = useState(false);
   const [togglingTournament, setTogglingTournament] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   // Score inputs
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
@@ -122,6 +123,17 @@ export default function AdminPage() {
     setSeedMsg(res.ok ? data.message : data.error);
     setSeeding(false);
     if (res.ok) fetchMatches();
+  }
+
+  async function handleResetPoints() {
+    if (!confirm('This will DELETE all predictions and reset every user\'s points to 0. This cannot be undone. Continue?')) return;
+    setResetting(true);
+    setSeedMsg('');
+    const res = await fetch('/api/admin/reset-points', { method: 'POST' });
+    const data = await res.json();
+    setSeedMsg(res.ok ? data.message : data.error);
+    setResetting(false);
+    if (res.ok) fetchWallets();
   }
 
   async function handleToggleTournament() {
@@ -239,6 +251,13 @@ export default function AdminPage() {
             }`}
           >
             {togglingTournament ? '...' : tournamentEnded ? 'Reactivate Tournament' : 'End Tournament'}
+          </button>
+          <button
+            onClick={handleResetPoints}
+            disabled={resetting}
+            className="text-xs px-3 py-2 rounded-sm font-bold bg-orange-700 hover:bg-orange-600 text-white transition-colors disabled:opacity-40"
+          >
+            {resetting ? 'Resetting...' : 'Reset All Points'}
           </button>
           <button
             onClick={() => { setShowCreateForm(!showCreateForm); setCreateMsg(''); }}
@@ -375,14 +394,27 @@ export default function AdminPage() {
             <div className="p-8 text-center text-sb-muted text-sm">No wallets linked yet</div>
           ) : (
             wallets.map((u, i) => (
-              <div key={u.discordId} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border last:border-0">
-                <div className="text-sb-muted text-xs font-mono w-6 shrink-0">{i + 1}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-white">{u.username}</div>
-                  <div className="text-[10px] text-sb-muted">{u.discordId}</div>
+              <div key={u.discordId} className="px-4 py-3 border-b border-sb-border last:border-0">
+                <div className="flex items-center gap-3 mb-1.5">
+                  <div className={`text-xs font-black w-6 shrink-0 ${i === 0 ? 'text-sb-yellow' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-500' : 'text-sb-muted'}`}>
+                    #{i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-bold text-white">{u.username}</span>
+                    <span className="text-[10px] text-sb-muted ml-2">{u.discordId}</span>
+                  </div>
+                  <div className="text-sb-yellow font-black text-sm shrink-0">{u.points} pts</div>
                 </div>
-                <div className="text-sb-yellow font-black text-sm shrink-0">{u.points} pts</div>
-                <div className="text-green-400 font-mono text-xs break-all text-right max-w-[200px]">{u.walletAddress}</div>
+                <div className="ml-9 flex items-center gap-2">
+                  <span className="text-[10px] text-sb-muted uppercase shrink-0">Wallet:</span>
+                  <span className="text-green-400 font-mono text-xs break-all">{u.walletAddress}</span>
+                  <button
+                    onClick={() => navigator.clipboard.writeText(u.walletAddress)}
+                    className="shrink-0 text-[10px] text-sb-muted hover:text-white border border-sb-border rounded-sm px-1.5 py-0.5 transition-colors"
+                  >
+                    Copy
+                  </button>
+                </div>
               </div>
             ))
           )}
