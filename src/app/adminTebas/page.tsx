@@ -58,6 +58,7 @@ export default function AdminPage() {
   // Seed / tournament
   const [seedMsg, setSeedMsg] = useState('');
   const [seeding, setSeeding] = useState(false);
+  const [patching, setPatching] = useState(false);
   const [tournamentEnded, setTournamentEnded] = useState(false);
   const [togglingTournament, setTogglingTournament] = useState(false);
   const [resetting, setResetting] = useState(false);
@@ -253,6 +254,11 @@ export default function AdminPage() {
             disabled={seeding}
             className="sb-btn-outline text-xs px-3 py-2 disabled:opacity-40"
           >
+            </button>
+          <button onClick={handlePatchTimes} disabled={patching} className="sb-btn text-xs px-3 py-2 disabled:opacity-40">
+            {patching ? 'Patching...' : 'Fix Fixture Times'}
+          </button>
+          <button onClick={handleSeed} disabled={seeding} className="sb-btn-outline text-xs px-3 py-2 disabled:opacity-40">
             {seeding ? 'Seeding...' : 'Seed Group Stage'}
           </button>
           <button
