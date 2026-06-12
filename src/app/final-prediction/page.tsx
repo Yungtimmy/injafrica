@@ -105,7 +105,7 @@ export default function FinalPredictionPage() {
       {saved && (
         <div className="sb-card px-4 py-3 border-l-4 border-l-sb-yellow">
           <div className="text-[10px] text-sb-muted uppercase mb-1">Your current prediction</div>
-          <div className="text-white font-bold text-sm">{saved.team1} <span className="text-sb-yellow">{saved.scoreTeam1}\u2013{saved.scoreTeam2}</span> {saved.team2}</div>
+          <div className="text-white font-bold text-sm">{saved.team1} <span className="text-sb-yellow">{saved.scoreTeam1}v{saved.scoreTeam2}</span> {saved.team2}</div>
         </div>
       )}
 
@@ -136,7 +136,7 @@ export default function FinalPredictionPage() {
                   <div className="text-xs text-sb-muted mb-1 truncate max-w-[100px]">{team1}</div>
                   <input type="number" min="0" max="20" value={scoreTeam1} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScoreTeam1(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
                 </div>
-                <div className="text-sb-muted font-black text-xl pb-1">\u2013</div>
+                <div className="text-sb-muted font-black text-xl pb-1">v</div>
                 <div className="text-center">
                   <div className="text-xs text-sb-muted mb-1 truncate max-w-[100px]">{team2}</div>
                   <input type="number" min="0" max="20" value={scoreTeam2} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScoreTeam2(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
