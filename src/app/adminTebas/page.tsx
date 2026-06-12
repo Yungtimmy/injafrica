@@ -77,7 +77,9 @@ export default function AdminPage() {
 
   // Wallets
   const [wallets, setWallets] = useState<{ discordId: string; username: string; points: number; walletAddress: string }[]>([]);
-  const [activeTab, setActiveTab] = useState<'matches' | 'wallets'>('matches');
+  const [activeTab, setActiveTab] = useState<'matches' | 'wallets' | 'users' | 'finalPredictions'>('matches');
+  const [users, setUsers] = useState([]);
+  const [finalPredictions, setFinalPredictions] = useState([]);
 
   useEffect(() => {
     if (status === 'unauthenticated') window.location.href = '/';
@@ -93,6 +95,8 @@ export default function AdminPage() {
           fetchMatches();
           fetchTournamentStatus();
           fetchWallets();
+          fetchUsers();
+          fetchFinalPredictions();
         } else {
           setLoading(false);
         }
@@ -167,6 +171,16 @@ export default function AdminPage() {
       [matchId]: res.ok ? `Done. ${data.predictionsUpdated} predictions scored.` : (data.error || 'Error'),
     }));
     if (res.ok) fetchMatches();
+  }
+
+  async function fetchUsers() {
+    const res = await fetch('/api/admin/users');
+    if (res.ok) setUsers(await res.json());
+  }
+
+  async function fetchFinalPredictions() {
+    const res = await fetch('/api/admin/final-predictions');
+    if (res.ok) setFinalPredictions(await res.json());
   }
 
   async function fetchWallets() {
@@ -368,7 +382,7 @@ export default function AdminPage() {
 
       {/* Main tab switcher */}
       <div className="flex gap-1">
-        {(['matches', 'wallets'] as const).map((tab) => (
+        {(['matches', 'wallets', 'users', 'finalPredictions'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -378,7 +392,7 @@ export default function AdminPage() {
                 : 'bg-sb-card border border-sb-border text-sb-muted hover:text-white'
             }`}
           >
-            {tab === 'wallets' ? `Wallets (${wallets.length})` : 'Matches'}
+            {tab === 'wallets' ? `Wallets (${wallets.length})` : tab === 'users' ? `Users (${users.length})` : tab === 'finalPredictions' ? `Final Predictions (${finalPredictions.length})` : 'Matches'}
           </button>
         ))}
       </div>
@@ -422,6 +436,38 @@ export default function AdminPage() {
       )}
 
       {/* Stage filter tabs — matches only */}
+
+      {activeTab === 'users' && (
+        <div className="sb-card overflow-hidden">
+          <div className="sb-section-header">Registered Users<span className="ml-auto text-sb-muted text-[10px] font-normal normal-case">{users.length} total</span></div>
+          {users.length === 0 ? <div className="p-8 text-center text-sb-muted text-sm">No users yet</div> : (users as any[]).map((u, i) => (
+            <div key={u.discordId} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border last:border-0">
+              <div className="text-xs font-black w-6 shrink-0 text-sb-muted">#{i+1}</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-bold text-white">{u.username}</div>
+                <div className="text-[10px] text-sb-muted">{u.discordId} · Joined {new Date(u.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}</div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-sb-yellow font-black text-sm">{u.points} pts</div>
+                {u.walletAddress ? <div className="text-[10px] text-green-400">Wallet linked</div> : <div className="text-[10px] text-sb-muted">No wallet</div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {activeTab === 'finalPredictions' && (
+        <div className="sb-card overflow-hidden">
+          <div className="sb-section-header">Final Predictions<span className="ml-auto text-sb-muted text-[10px] font-normal normal-case">{finalPredictions.length} entries</span></div>
+          {finalPredictions.length === 0 ? <div className="p-8 text-center text-sb-muted text-sm">No final predictions yet</div> : (finalPredictions as any[]).map((fp) => (
+            <div key={fp.discordId} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border last:border-0">
+              <div className="flex-1 min-w-0"><span className="text-sm font-bold text-white">{fp.username}</span><span className="text-[10px] text-sb-muted ml-2">{fp.discordId}</span></div>
+              <div className="text-sm text-white shrink-0"><span className="font-bold">{fp.team1}</span><span className="text-sb-yellow font-black mx-2">{fp.scoreTeam1}-{fp.scoreTeam2}</span><span className="font-bold">{fp.team2}</span></div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {activeTab === 'matches' && <div className="flex gap-1 overflow-x-auto no-scrollbar pb-1">
         {allStages.map((s) => (
           <button
