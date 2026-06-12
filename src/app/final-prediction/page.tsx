@@ -43,7 +43,7 @@ export default function FinalPredictionPage() {
   const [scoreTeam2, setScoreTeam2] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
-  const [saved, setSaved] = useState(null);
+  const [saved, setSaved] = useState<{ team1: string; team2: string; scoreTeam1: number; scoreTeam2: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const { days, hours, minutes, seconds, expired } = useCountdown();
 
@@ -56,7 +56,7 @@ export default function FinalPredictionPage() {
     }).finally(() => setLoading(false));
   }, [session]);
 
-  async function handleSubmit(e) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (expired) { setMessage('Predictions are closed'); return; }
     if (!team1 || !team2 || team1 === team2) { setMessage('Select two different teams'); return; }
@@ -115,16 +115,16 @@ export default function FinalPredictionPage() {
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-[10px] text-sb-muted uppercase tracking-wide mb-1">Team 1</label>
-              <select value={team1} onChange={e => setTeam1(e.target.value)} required disabled={expired} className="w-full bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-3 py-2 text-sm text-white focus:outline-none disabled:opacity-50">
+              <select value={team1} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTeam1(e.target.value)} required disabled={expired} className="w-full bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-3 py-2 text-sm text-white focus:outline-none disabled:opacity-50">
                 <option value="">Select...</option>
-                {team1Options.map(t => <option key={t} value={t}>{t}</option>)}
+                {team1Options.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
             <div>
               <label className="block text-[10px] text-sb-muted uppercase tracking-wide mb-1">Team 2</label>
-              <select value={team2} onChange={e => setTeam2(e.target.value)} required disabled={expired} className="w-full bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-3 py-2 text-sm text-white focus:outline-none disabled:opacity-50">
+              <select value={team2} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setTeam2(e.target.value)} required disabled={expired} className="w-full bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-3 py-2 text-sm text-white focus:outline-none disabled:opacity-50">
                 <option value="">Select...</option>
-                {team2Options.map(t => <option key={t} value={t}>{t}</option>)}
+                {team2Options.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
           </div>
@@ -134,12 +134,12 @@ export default function FinalPredictionPage() {
               <div className="flex items-center justify-center gap-4">
                 <div className="text-center">
                   <div className="text-xs text-sb-muted mb-1 truncate max-w-[100px]">{team1}</div>
-                  <input type="number" min="0" max="20" value={scoreTeam1} onChange={e => setScoreTeam1(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
+                  <input type="number" min="0" max="20" value={scoreTeam1} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScoreTeam1(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
                 </div>
                 <div className="text-sb-muted font-black text-xl pb-1">\u2013</div>
                 <div className="text-center">
                   <div className="text-xs text-sb-muted mb-1 truncate max-w-[100px]">{team2}</div>
-                  <input type="number" min="0" max="20" value={scoreTeam2} onChange={e => setScoreTeam2(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
+                  <input type="number" min="0" max="20" value={scoreTeam2} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setScoreTeam2(e.target.value)} required disabled={expired} className="w-16 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-2 py-2 text-center text-xl font-black text-white focus:outline-none disabled:opacity-50" />
                 </div>
               </div>
             </div>
