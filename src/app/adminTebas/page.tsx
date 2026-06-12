@@ -119,6 +119,15 @@ export default function AdminPage() {
     }
   }
 
+  async function handlePatchTimes() {
+    if (!confirm("Update all 72 fixture kickoff times? Points and predictions unaffected.")) return;
+    setPatching(true); setSeedMsg("");
+    const res = await fetch("/api/admin/patch-fixture-times", { method: "POST" });
+    const data = await res.json();
+    setSeedMsg(res.ok ? `Patched ${data.updated} matches` : data.error);
+    setPatching(false); if (res.ok) fetchMatches();
+  }
+
   async function handleSeed() {
     if (!confirm('This will wipe and reseed all Group Stage fixtures. Knockout matches you added manually will NOT be affected. Continue?')) return;
     setSeeding(true);
