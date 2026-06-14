@@ -4,20 +4,18 @@ export function calculatePoints(
   actualHome: number,
   actualAway: number
 ): number {
-  // Exact score
-  if (predictedHome === actualHome && predictedAway === actualAway) return 5;
-
-  // Determine outcomes
   const actualOutcome =
     actualHome > actualAway ? 'home' : actualAway > actualHome ? 'away' : 'draw';
   const predictedOutcome =
     predictedHome > predictedAway ? 'home' : predictedAway > predictedHome ? 'away' : 'draw';
 
-  if (predictedOutcome !== actualOutcome) return 0;
+  const correctResult = predictedOutcome === actualOutcome;
+  const correctScore = predictedHome === actualHome && predictedAway === actualAway;
 
-  // Correct draw (not exact score)
-  if (actualOutcome === 'draw') return 3;
+  if (!correctResult) return 0;
 
-  // Correct winner
-  return 1;
+  const resultBonus = actualOutcome === 'draw' ? 3 : 1;
+  const scoreBonus = correctScore ? 5 : 0;
+
+  return resultBonus + scoreBonus;
 }
