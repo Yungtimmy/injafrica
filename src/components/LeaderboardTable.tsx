@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { ILeaderboardEntry } from '@/types';
 
 interface LeaderboardTableProps {
@@ -52,7 +53,7 @@ export default function LeaderboardTable({ entries, currentDiscordId }: Leaderbo
                     )}
                   </td>
                   <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2">
+                    <Link href={`/players/${entry.discordId}`} className="flex items-center gap-2 hover:underline">
                       <Image
                         src={entry.avatar || `https://cdn.discordapp.com/embed/avatars/${entry.rank % 6}.png`}
                         alt={entry.username}
@@ -64,7 +65,7 @@ export default function LeaderboardTable({ entries, currentDiscordId }: Leaderbo
                         {entry.username}
                         {isMe && <span className="ml-1.5 text-[10px] text-sb-yellow/60 font-normal">(you)</span>}
                       </span>
-                    </div>
+                    </Link>
                   </td>
                   <td className="px-4 py-2.5 text-right">
                     <span className={`font-black text-base ${RANK_STYLE[entry.rank] ?? 'text-white'}`}>
