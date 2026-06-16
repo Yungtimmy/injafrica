@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import Prediction from '@/models/Prediction';
+import '@/models/Match';
 
 export async function GET(
   request: Request,
