@@ -42,6 +42,7 @@ export default function PlayerProfilePage() {
   const [data, setData] = useState<PlayerData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (status === 'unauthenticated') window.location.href = '/';
@@ -55,8 +56,14 @@ export default function PlayerProfilePage() {
           setNotFound(true);
           return;
         }
-        if (res.ok) setData(await res.json());
+        if (res.ok) {
+          setData(await res.json());
+          return;
+        }
+        const body = await res.json().catch(() => null);
+        setError(body?.error || `Failed to load profile (${res.status})`);
       })
+      .catch(() => setError('Network error loading profile'))
       .finally(() => setLoading(false));
   }, [status, params.discordId]);
 
@@ -72,6 +79,15 @@ export default function PlayerProfilePage() {
     return (
       <div className="max-w-3xl mx-auto px-3 py-10 text-center">
         <p className="text-sb-muted text-sm mb-4">Player not found.</p>
+        <Link href="/leaderboard" className="sb-btn text-xs px-4 inline-block">Back to Leaderboard</Link>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto px-3 py-10 text-center">
+        <p className="text-red-400 text-sm mb-4">{error}</p>
         <Link href="/leaderboard" className="sb-btn text-xs px-4 inline-block">Back to Leaderboard</Link>
       </div>
     );
