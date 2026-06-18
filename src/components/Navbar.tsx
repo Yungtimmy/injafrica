@@ -11,6 +11,7 @@ const NAV_LINKS = [
   { href: '/dashboard', label: 'Home' },
   { href: '/matches',   label: 'Matches' },
   { href: '/leaderboard', label: 'Leaderboard' },
+  { href: '/final-prediction', label: 'Final Pred.' },
   { href: '/profile',  label: 'My Account' },
 ];
 
