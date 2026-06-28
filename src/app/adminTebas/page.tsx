@@ -42,7 +42,7 @@ const VENUES = [
 const emptyForm = {
   homeTeam: '',
   awayTeam: '',
-  stage: 'Round of 16',
+  stage: 'Round of 32',
   group: '',
   matchDate: '',
   venue: '',

@@ -24,7 +24,11 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
+    // Generate a unique matchId (the string field is required by schema but only used for seeded group fixtures)
+    const generatedMatchId = `KO-${stage.replace(/\s+/g, '').toUpperCase().slice(0, 8)}-${Date.now().toString(36)}`;
+
     const match = await Match.create({
+      matchId: generatedMatchId,
       homeTeam: homeTeam.trim(),
       awayTeam: awayTeam.trim(),
       stage: stage.trim(),
@@ -38,8 +42,9 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ message: 'Match created', match }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error('POST /api/admin/create-match error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const msg = error?.message || 'Internal server error';
+    return NextResponse.json({ error: msg.includes('validation') || error?.name === 'ValidationError' ? msg : 'Internal server error' }, { status: 500 });
   }
 }

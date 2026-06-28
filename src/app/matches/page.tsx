@@ -29,7 +29,7 @@ async function getMatchesData(discordId: string) {
   return { grouped, predMap };
 }
 
-const STAGE_ORDER = ['Group Stage', 'Round of 16', 'Quarter-finals', 'Semi-finals', 'Final'];
+const STAGE_ORDER = ['Group Stage', 'Round of 32', 'Round of 16', 'Quarter-finals', 'Semi-finals', 'Third Place', 'Final'];
 
 export default async function MatchesPage() {
   const session = await auth();

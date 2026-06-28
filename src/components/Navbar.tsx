@@ -111,7 +111,7 @@ export default function Navbar() {
       {session && (
         <div className="bg-sb-card border-b border-sb-border">
           <div className="max-w-7xl mx-auto px-3 flex items-center gap-1 h-9 overflow-x-auto no-scrollbar">
-            {['Group Stage', 'Round of 16', 'Quarter-finals', 'Semi-finals', 'Final'].map((s) => (
+            {['Group Stage', 'Round of 32', 'Round of 16', 'Quarter-finals', 'Semi-finals', 'Third Place', 'Final'].map((s) => (
               <Link
                 key={s}
                 href="/matches"
