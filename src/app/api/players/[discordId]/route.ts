@@ -22,6 +22,10 @@ export async function GET(
     const discordId = resolvedParams?.discordId;
     await dbConnect();
 
+    // Force registration of Match model for populate (prevents "Schema hasn't been registered")
+    // This ensures the model is loaded before .populate('matchId')
+    await import('@/models/Match');
+
     const user = await User.findOne({ discordId }).select('discordId username avatar points createdAt').lean();
     if (!user) {
       return NextResponse.json({ error: 'Player not found' }, { status: 404 });
@@ -30,7 +34,9 @@ export async function GET(
     const userPoints = (user as any).points ?? 0;
     const rank = (await User.countDocuments({ points: { $gt: userPoints } })) + 1;
 
-    const predictions = await Prediction.find({ discordId, pointsEarned: { $ne: null } })
+    // Return ALL predictions (scored + pending) so users can see former group stage predictions
+    // even for matches not yet scored. Consistent with self-profile behavior.
+    const predictions = await Prediction.find({ discordId })
       .populate('matchId')
       .sort({ createdAt: -1 })
       .lean();

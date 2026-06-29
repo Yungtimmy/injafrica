@@ -150,7 +150,7 @@ export default function PlayerProfilePage() {
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
         {[
-          { val: total, label: 'Scored Predictions', color: 'text-white' },
+          { val: total, label: 'Predictions', color: 'text-white' },
           { val: exactScores, label: 'Exact Scores', color: 'text-sb-yellow' },
           { val: correctOutcomes, label: 'Correct Wins', color: 'text-green-400' },
           { val: wrong, label: 'Wrong', color: 'text-red-400' },
@@ -166,7 +166,7 @@ export default function PlayerProfilePage() {
       <div className="sb-card overflow-hidden">
         <div className="sb-section-header">Prediction History</div>
         {predictions.length === 0 ? (
-          <div className="p-8 text-center text-sb-muted text-sm">No scored predictions yet</div>
+          <div className="p-8 text-center text-sb-muted text-sm">No predictions yet</div>
         ) : (
           predictions.map((pred) => {
             const match = pred.matchId;
