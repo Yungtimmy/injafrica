@@ -51,4 +51,4 @@ export interface ISettings {
 }
 
 export type MatchStatus = 'scheduled' | 'live' | 'finished';
-export type Stage = 'Group Stage' | 'Round of 16' | 'Quarter-finals' | 'Semi-finals' | 'Final';
+export type Stage = 'Group Stage' | 'Round of 32' | 'Round of 16' | 'Quarter-finals' | 'Semi-finals' | 'Third Place' | 'Final';
