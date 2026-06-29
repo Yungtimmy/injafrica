@@ -23,6 +23,7 @@ export interface IMatch {
   status: 'scheduled' | 'live' | 'finished';
   homeScore: number | null;
   awayScore: number | null;
+  qualifier?: 'home' | 'away' | null;
 }
 
 export interface IPrediction {
@@ -30,8 +31,9 @@ export interface IPrediction {
   userId: string;
   discordId: string;
   matchId: string;
-  predictedHome: number;
-  predictedAway: number;
+  predictedHome: number | null;
+  predictedAway: number | null;
+  predictedQualifier?: 'home' | 'away' | null;
   pointsEarned: number | null;
   createdAt: Date;
   updatedAt: Date;

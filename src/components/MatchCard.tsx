@@ -84,7 +84,9 @@ export default function MatchCard({ match, prediction, showPredictionForm = fals
               <div className="flex items-center gap-2 text-xs text-sb-muted">
                 <span>Your pick:</span>
                 <span className="text-white font-bold">
-                  {prediction.predictedHome} – {prediction.predictedAway}
+                  {prediction.predictedQualifier
+                    ? `${prediction.predictedQualifier === 'home' ? match.homeTeam : match.awayTeam} (qualifies)`
+                    : `${prediction.predictedHome} – ${prediction.predictedAway}`}
                 </span>
               </div>
               {prediction.pointsEarned !== null ? (

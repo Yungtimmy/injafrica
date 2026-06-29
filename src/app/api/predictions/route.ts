@@ -13,18 +13,20 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { matchId, predictedHome, predictedAway } = body;
+    const { matchId, predictedHome, predictedAway, predictedQualifier } = body;
 
-    if (matchId === undefined || predictedHome === undefined || predictedAway === undefined) {
+    if (matchId === undefined || ((predictedHome === undefined || predictedAway === undefined) && !predictedQualifier)) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    if (typeof predictedHome !== 'number' || typeof predictedAway !== 'number') {
-      return NextResponse.json({ error: 'Scores must be numbers' }, { status: 400 });
+    if (predictedHome !== undefined && (typeof predictedHome !== 'number' || predictedHome < 0)) {
+      return NextResponse.json({ error: 'Scores must be non-negative numbers' }, { status: 400 });
     }
-
-    if (predictedHome < 0 || predictedAway < 0) {
-      return NextResponse.json({ error: 'Scores cannot be negative' }, { status: 400 });
+    if (predictedAway !== undefined && (typeof predictedAway !== 'number' || predictedAway < 0)) {
+      return NextResponse.json({ error: 'Scores must be non-negative numbers' }, { status: 400 });
+    }
+    if (predictedQualifier && !['home', 'away'].includes(predictedQualifier)) {
+      return NextResponse.json({ error: 'predictedQualifier must be "home" or "away"' }, { status: 400 });
     }
 
     await dbConnect();
@@ -48,23 +50,31 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (predictedQualifier && match.stage === 'Group Stage') {
+      return NextResponse.json({ error: 'Qualification predictions are only for knockout stages' }, { status: 400 });
+    }
+
     // Get user document
     const user = await User.findOne({ discordId: session.user.discordId });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
+    // Build update (support partial for qualifier + scores on same prediction)
+    const updateData: any = {
+      userId: user._id,
+      discordId: session.user.discordId,
+      matchId,
+      pointsEarned: null,
+    };
+    if (predictedHome !== undefined) updateData.predictedHome = predictedHome;
+    if (predictedAway !== undefined) updateData.predictedAway = predictedAway;
+    if (predictedQualifier) updateData.predictedQualifier = predictedQualifier;
+
     // Upsert prediction
     const prediction = await Prediction.findOneAndUpdate(
       { discordId: session.user.discordId, matchId },
-      {
-        userId: user._id,
-        discordId: session.user.discordId,
-        matchId,
-        predictedHome,
-        predictedAway,
-        pointsEarned: null,
-      },
+      updateData,
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
 

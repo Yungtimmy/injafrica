@@ -10,6 +10,7 @@ import { useState } from 'react';
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Home' },
   { href: '/matches',   label: 'Matches' },
+  { href: '/qualification', label: 'Qualification' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/profile',  label: 'My Account' },
 ];

@@ -13,6 +13,7 @@ interface Match {
   status: string;
   homeScore: number | null;
   awayScore: number | null;
+  qualifier?: 'home' | 'away' | null;
 }
 
 const KNOCKOUT_STAGES = [
@@ -65,6 +66,7 @@ export default function AdminPage() {
   // Score inputs
   const [scoreInputs, setScoreInputs] = useState<Record<string, { home: string; away: string }>>({});
   const [scoreMessages, setScoreMessages] = useState<Record<string, string>>({});
+  const [qualifierInputs, setQualifierInputs] = useState<Record<string, string>>({});
 
   // Create match form
   const [form, setForm] = useState(emptyForm);
@@ -156,10 +158,13 @@ export default function AdminPage() {
       setScoreMessages((m) => ({ ...m, [matchId]: 'Invalid scores' }));
       return;
     }
+    const body: any = { matchId, homeScore: home, awayScore: away };
+    const qual = qualifierInputs[matchId];
+    if (qual) body.qualifier = qual;
     const res = await fetch('/api/admin/set-score', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ matchId, homeScore: home, awayScore: away }),
+      body: JSON.stringify(body),
     });
     const data = await res.json();
     setScoreMessages((m) => ({
@@ -473,6 +478,11 @@ export default function AdminPage() {
                     ? `FT ${match.homeScore}–${match.awayScore}`
                     : match.status}
                 </span>
+                {match.stage !== 'Group Stage' && match.qualifier && (
+                  <span className="text-[10px] ml-1 text-green-400">
+                    Q: {match.qualifier === 'home' ? match.homeTeam : match.awayTeam}
+                  </span>
+                )}
 
                 {/* Score inputs */}
                 <div className="flex items-center gap-1.5 shrink-0">
@@ -496,6 +506,22 @@ export default function AdminPage() {
                     Set
                   </button>
                 </div>
+
+                {/* Qualifier for knockout stages (2pt qualification guess) */}
+                {match.stage !== 'Group Stage' && (
+                  <div className="mt-1 flex items-center gap-1.5 shrink-0">
+                    <span className="text-[10px] text-sb-muted">Qualifier:</span>
+                    <select
+                      value={qualifierInputs[match._id] || match.qualifier || ''}
+                      onChange={(e) => setQualifierInputs((s) => ({ ...s, [match._id]: e.target.value }))}
+                      className="w-20 bg-sb-bg border border-sb-border focus:border-sb-yellow rounded-sm px-1 py-1 text-xs text-white focus:outline-none"
+                    >
+                      <option value="">--</option>
+                      <option value="home">{match.homeTeam}</option>
+                      <option value="away">{match.awayTeam}</option>
+                    </select>
+                  </div>
+                )}
               </div>
               {scoreMessages[match._id] && (
                 <div className="mt-1.5 text-[11px] text-sb-muted">{scoreMessages[match._id]}</div>

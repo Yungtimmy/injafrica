@@ -6,8 +6,9 @@ import Image from 'next/image';
 
 interface PredictionWithMatch {
   _id: string;
-  predictedHome: number;
-  predictedAway: number;
+  predictedHome: number | null;
+  predictedAway: number | null;
+  predictedQualifier?: 'home' | 'away' | null;
   pointsEarned: number | null;
   createdAt: string;
   updatedAt: string;
@@ -219,7 +220,11 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center shrink-0">
                   <div className="text-[10px] text-sb-muted">Your Pick</div>
-                  <div className="font-bold text-white text-sm">{pred.predictedHome}–{pred.predictedAway}</div>
+                  <div className="font-bold text-white text-sm">
+                    {pred.predictedQualifier
+                      ? `${pred.predictedQualifier === 'home' ? match?.homeTeam : match?.awayTeam} (qualifies)`
+                      : `${pred.predictedHome}–${pred.predictedAway}`}
+                  </div>
                 </div>
                 {match?.status === 'finished' && (
                   <div className="text-center shrink-0">

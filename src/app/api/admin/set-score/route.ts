@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
-    const { matchId, homeScore, awayScore } = body;
+    const { matchId, homeScore, awayScore, qualifier } = body;
 
     if (matchId === undefined || homeScore === undefined || awayScore === undefined) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
@@ -28,13 +28,16 @@ export async function POST(req: NextRequest) {
 
     await dbConnect();
 
+    const update: any = {
+      homeScore,
+      awayScore,
+      status: 'finished',
+    };
+    if (qualifier) update.qualifier = qualifier;
+
     const match = await Match.findByIdAndUpdate(
       matchId,
-      {
-        homeScore,
-        awayScore,
-        status: 'finished',
-      },
+      update,
       { new: true }
     );
 
@@ -42,21 +45,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Match not found' }, { status: 404 });
     }
 
-    // Score all predictions for this match
+    const actualQualifier = match.qualifier;
+
+    // Score all predictions for this match (support both score predictions and qualification guesses)
     const predictions = await Prediction.find({ matchId });
     let predictionsUpdated = 0;
 
     for (const pred of predictions) {
-      const pts = calculatePoints(
-        pred.predictedHome,
-        pred.predictedAway,
-        homeScore,
-        awayScore
-      );
+      let pts = 0;
+
+      // Qualification prediction (2 points for correct advancer, for RO32)
+      if (pred.predictedQualifier && actualQualifier) {
+        pts += (pred.predictedQualifier === actualQualifier) ? 2 : 0;
+      }
+
+      // Normal score prediction (using 90 min scores for RO32)
+      if (pred.predictedHome != null && pred.predictedAway != null) {
+        pts += calculatePoints(
+          pred.predictedHome,
+          pred.predictedAway,
+          homeScore,
+          awayScore
+        );
+      }
 
       await Prediction.findByIdAndUpdate(pred._id, { pointsEarned: pts });
 
       // Update user total points (add if not already scored)
+      const prevPts = pred.pointsEarned ?? 0;
       if (pred.pointsEarned === null) {
         await User.findOneAndUpdate(
           { discordId: pred.discordId },
@@ -64,7 +80,7 @@ export async function POST(req: NextRequest) {
         );
       } else {
         // Re-score: adjust the difference
-        const diff = pts - pred.pointsEarned;
+        const diff = pts - prevPts;
         if (diff !== 0) {
           await User.findOneAndUpdate(
             { discordId: pred.discordId },

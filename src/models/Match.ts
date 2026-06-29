@@ -12,6 +12,7 @@ export interface IMatchDocument extends Document {
   status: 'scheduled' | 'live' | 'finished';
   homeScore: number | null;
   awayScore: number | null;
+  qualifier: 'home' | 'away' | null;
 }
 
 const MatchSchema = new Schema<IMatchDocument>({
@@ -30,6 +31,7 @@ const MatchSchema = new Schema<IMatchDocument>({
   },
   homeScore: { type: Number, default: null },
   awayScore: { type: Number, default: null },
+  qualifier: { type: String, enum: ['home', 'away'], default: null },
 });
 
 const Match: Model<IMatchDocument> =
