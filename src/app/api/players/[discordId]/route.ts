@@ -3,6 +3,7 @@ import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import Prediction from '@/models/Prediction';
+import Match from '@/models/Match'; // ensure model is registered for .populate('matchId')
 
 export async function GET(
   _req: NextRequest,
@@ -14,7 +15,11 @@ export async function GET(
   }
 
   try {
-    const { discordId } = params;
+    // Support both sync params (Next 14) and async (Next 15+)
+    const resolvedParams = params && typeof (params as any).then === 'function' 
+      ? await (params as any) 
+      : params;
+    const discordId = resolvedParams?.discordId;
     await dbConnect();
 
     const user = await User.findOne({ discordId }).select('discordId username avatar points createdAt').lean();
@@ -33,6 +38,7 @@ export async function GET(
     return NextResponse.json({ user, rank, predictions });
   } catch (error) {
     console.error('GET /api/players/[discordId] error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    const details = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: 'Internal server error', details }, { status: 500 });
   }
 }

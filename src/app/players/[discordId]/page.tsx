@@ -70,7 +70,7 @@ export default function PlayerProfilePage() {
           setData(await res.json());
         } else {
           const err = await res.json().catch(() => ({}));
-          setError(err.error || `Request failed with status ${res.status}`);
+          setError(err.details ? `${err.error}: ${err.details}` : (err.error || `Request failed with status ${res.status}`));
         }
       })
       .catch((e) => {
