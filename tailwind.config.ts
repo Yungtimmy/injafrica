@@ -6,6 +6,20 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
+  // tailwind.config.ts
+theme: {
+  extend: {
+    animation: {
+      ticker: 'ticker 18s linear infinite',
+    },
+    keyframes: {
+      ticker: {
+        '0%':   { transform: 'translateX(0)' },
+        '100%': { transform: 'translateX(-50%)' },
+      },
+    },
+  },
+},
   theme: {
     extend: {
       colors: {
