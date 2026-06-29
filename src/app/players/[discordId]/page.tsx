@@ -42,6 +42,7 @@ export default function PlayerProfilePage() {
   const [data, setData] = useState<PlayerData | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === 'unauthenticated') window.location.href = '/';
@@ -49,13 +50,32 @@ export default function PlayerProfilePage() {
 
   useEffect(() => {
     if (status !== 'authenticated') return;
-    fetch(`/api/players/${params.discordId}`)
+
+    const rawId = params.discordId;
+    const discordId = Array.isArray(rawId) ? rawId[0] : rawId;
+
+    if (!discordId) {
+      setLoading(false);
+      setError('Invalid player ID');
+      return;
+    }
+
+    fetch(`/api/players/${discordId}`)
       .then(async (res) => {
         if (res.status === 404) {
           setNotFound(true);
           return;
         }
-        if (res.ok) setData(await res.json());
+        if (res.ok) {
+          setData(await res.json());
+        } else {
+          const err = await res.json().catch(() => ({}));
+          setError(err.error || `Request failed with status ${res.status}`);
+        }
+      })
+      .catch((e) => {
+        setError('Network error loading player profile');
+        console.error(e);
       })
       .finally(() => setLoading(false));
   }, [status, params.discordId]);
@@ -77,7 +97,23 @@ export default function PlayerProfilePage() {
     );
   }
 
-  if (!data) return null;
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto px-3 py-10 text-center">
+        <p className="text-red-400 text-sm mb-2">Error: {error}</p>
+        <Link href="/leaderboard" className="sb-btn text-xs px-4 inline-block">Back to Leaderboard</Link>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="max-w-3xl mx-auto px-3 py-10 text-center">
+        <p className="text-sb-muted text-sm mb-4">Failed to load player data.</p>
+        <Link href="/leaderboard" className="sb-btn text-xs px-4 inline-block">Back to Leaderboard</Link>
+      </div>
+    );
+  }
   const { user, rank, predictions } = data;
 
   const total = predictions.length;
@@ -106,7 +142,7 @@ export default function PlayerProfilePage() {
           </div>
         </div>
         <div className="text-right shrink-0">
-          <div className="text-3xl font-black text-sb-yellow">{user.points}</div>
+          <div className="text-3xl font-black text-sb-yellow">{user.points ?? 0}</div>
           <div className="text-[10px] text-sb-muted uppercase">Total Pts</div>
         </div>
       </div>
@@ -136,6 +172,15 @@ export default function PlayerProfilePage() {
             const match = pred.matchId;
             const pts = pred.pointsEarned;
             const ptColor = pts === 5 ? 'text-sb-yellow' : pts && pts > 0 ? 'text-green-400' : 'text-red-400';
+
+            let dateDisplay = '';
+            if (match?.matchDate) {
+              const d = new Date(match.matchDate);
+              if (!isNaN(d.getTime())) {
+                dateDisplay = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+              }
+            }
+
             return (
               <div key={pred._id} className="flex flex-wrap items-center px-4 py-3 border-b border-sb-border hover:bg-sb-card-2 gap-x-3 gap-y-1">
                 <div className="flex-1 min-w-0 basis-full sm:basis-auto">
@@ -144,7 +189,7 @@ export default function PlayerProfilePage() {
                   </div>
                   <div className="text-[10px] text-sb-muted">
                     {match?.stage}{match?.group ? ` · Group ${match.group}` : ''} ·{' '}
-                    {match?.matchDate ? new Date(match.matchDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : ''}
+                    {dateDisplay}
                   </div>
                 </div>
                 <div className="text-center shrink-0">

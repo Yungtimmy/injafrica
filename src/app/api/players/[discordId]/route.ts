@@ -1,11 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import dbConnect from '@/lib/mongodb';
 import User from '@/models/User';
 import Prediction from '@/models/Prediction';
 
 export async function GET(
-  _req: Request,
+  _req: NextRequest,
   { params }: { params: { discordId: string } }
 ) {
   const session = await auth();
@@ -22,7 +22,8 @@ export async function GET(
       return NextResponse.json({ error: 'Player not found' }, { status: 404 });
     }
 
-    const rank = (await User.countDocuments({ points: { $gt: user.points } })) + 1;
+    const userPoints = (user as any).points ?? 0;
+    const rank = (await User.countDocuments({ points: { $gt: userPoints } })) + 1;
 
     const predictions = await Prediction.find({ discordId, pointsEarned: { $ne: null } })
       .populate('matchId')
