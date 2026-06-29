@@ -6,35 +6,30 @@ const config: Config = {
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
-  // tailwind.config.ts
-theme: {
-  extend: {
-    animation: {
-      ticker: 'ticker 18s linear infinite',
-    },
-    keyframes: {
-      ticker: {
-        '0%':   { transform: 'translateX(0)' },
-        '100%': { transform: 'translateX(-50%)' },
-      },
-    },
-  },
-},
   theme: {
     extend: {
+      animation: {
+        ticker: 'ticker 18s linear infinite',
+      },
+      keyframes: {
+        ticker: {
+          '0%':   { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
+      },
       colors: {
         sb: {
-          green:      '#006633',
-          'green-dark': '#004d26',
+          green:         '#006633',
+          'green-dark':  '#004d26',
           'green-light': '#007a3d',
-          yellow:     '#f5c000',
+          yellow:        '#f5c000',
           'yellow-dark': '#d4a800',
-          bg:         '#0d130e',
-          card:       '#162119',
-          'card-2':   '#1e2e22',
-          border:     '#2a3f2e',
-          muted:      '#6b8070',
-          live:       '#e53935',
+          bg:            '#0d130e',
+          card:          '#162119',
+          'card-2':      '#1e2e22',
+          border:        '#2a3f2e',
+          muted:         '#6b8070',
+          live:          '#e53935',
         },
       },
       fontFamily: {
@@ -44,4 +39,5 @@ theme: {
   },
   plugins: [],
 };
+
 export default config;
