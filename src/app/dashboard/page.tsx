@@ -8,6 +8,7 @@ import Prediction from '@/models/Prediction';
 import User from '@/models/User';
 import MatchCard from '@/components/MatchCard';
 import { IMatch, IPrediction } from '@/types';
+import PointsTicker from '@/components/PointsTicker';
 
 async function getDashboardData(discordId: string) {
   await dbConnect();
@@ -73,6 +74,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-3 py-4">
+
+      
       {/* User stats bar */}
       <div className="sb-card mb-4 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -105,7 +108,9 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <PointsTicker />  {/* 👈 added here */}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">>
         {/* Main: matches */}
         <div className="lg:col-span-2 space-y-4">
           {/* Live */}
