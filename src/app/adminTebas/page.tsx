@@ -16,6 +16,15 @@ interface Match {
   qualifier?: 'home' | 'away' | null;
 }
 
+interface AdminUser {
+  discordId: string;
+  username: string;
+  avatar: string;
+  points: number;
+  walletAddress?: string;
+  createdAt: string;
+}
+
 const KNOCKOUT_STAGES = [
   'Round of 32',
   'Round of 16',
@@ -77,9 +86,10 @@ export default function AdminPage() {
   // Filter
   const [stageFilter, setStageFilter] = useState('All');
 
-  // Wallets
+  // Wallets / users
   const [wallets, setWallets] = useState<{ discordId: string; username: string; points: number; walletAddress: string }[]>([]);
-  const [activeTab, setActiveTab] = useState<'matches' | 'wallets'>('matches');
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [activeTab, setActiveTab] = useState<'matches' | 'wallets' | 'users'>('matches');
 
   useEffect(() => {
     if (status === 'unauthenticated') window.location.href = '/';
@@ -95,6 +105,7 @@ export default function AdminPage() {
           fetchMatches();
           fetchTournamentStatus();
           fetchWallets();
+          fetchUsers();
         } else {
           setLoading(false);
         }
@@ -135,7 +146,10 @@ export default function AdminPage() {
     const data = await res.json();
     setSeedMsg(res.ok ? data.message : data.error);
     setResetting(false);
-    if (res.ok) fetchWallets();
+    if (res.ok) {
+      fetchWallets();
+      fetchUsers();
+    }
   }
 
   async function handleToggleTournament() {
@@ -177,6 +191,11 @@ export default function AdminPage() {
   async function fetchWallets() {
     const res = await fetch('/api/admin/wallets');
     if (res.ok) setWallets(await res.json());
+  }
+
+  async function fetchUsers() {
+    const res = await fetch('/api/admin/users');
+    if (res.ok) setUsers(await res.json());
   }
 
   async function handleCreateMatch(e: React.FormEvent) {
@@ -373,7 +392,7 @@ export default function AdminPage() {
 
       {/* Main tab switcher */}
       <div className="flex gap-1">
-        {(['matches', 'wallets'] as const).map((tab) => (
+        {(['matches', 'wallets', 'users'] as const).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -383,7 +402,11 @@ export default function AdminPage() {
                 : 'bg-sb-card border border-sb-border text-sb-muted hover:text-white'
             }`}
           >
-            {tab === 'wallets' ? `Wallets (${wallets.length})` : 'Matches'}
+            {tab === 'wallets'
+              ? `Wallets (${wallets.length})`
+              : tab === 'users'
+                ? `Users (${users.length})`
+                : 'Matches'}
           </button>
         ))}
       </div>
@@ -419,6 +442,44 @@ export default function AdminPage() {
                   >
                     Copy
                   </button>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+
+      {/* Users tab */}
+      {activeTab === 'users' && (
+        <div className="sb-card overflow-hidden">
+          <div className="sb-section-header">
+            Registered Users
+            <span className="ml-auto text-sb-muted text-[10px] font-normal normal-case">{users.length} total</span>
+          </div>
+          {users.length === 0 ? (
+            <div className="p-8 text-center text-sb-muted text-sm">No users yet</div>
+          ) : (
+            users.map((u, i) => (
+              <div key={u.discordId} className="flex items-center gap-3 px-4 py-3 border-b border-sb-border last:border-0">
+                <div className="text-xs font-black w-6 shrink-0 text-sb-muted">#{i + 1}</div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-white">{u.username}</div>
+                  <div className="text-[10px] text-sb-muted">
+                    {u.discordId} · Joined{' '}
+                    {new Date(u.createdAt).toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })}
+                  </div>
+                </div>
+                <div className="text-right shrink-0">
+                  <div className="text-sb-yellow font-black text-sm">{u.points} pts</div>
+                  {u.walletAddress ? (
+                    <div className="text-[10px] text-green-400">Wallet linked</div>
+                  ) : (
+                    <div className="text-[10px] text-sb-muted">No wallet</div>
+                  )}
                 </div>
               </div>
             ))
