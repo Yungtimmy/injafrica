@@ -1,14 +1,14 @@
-`TypeScript` `Next.js` `Mongoose` `NextAuth` `License: MIT` `CI` `MCP-Native` `Live at /agent` `Multi-Language` `Vercel-Ready`
+`TypeScript` `Next.js` `Mongoose` `NextAuth` `License: MIT` `CI` `Africp-Native` `Live at /agent` `Multi-Language` `Vercel-Ready`
 
 # ⚽ INJAFRICA — The Verifiable AI Companion for WC2026
 
-> Natural-language football predictions where every agent action is **MCP-attested, collection-isolated, user-confirmed, scored by humans, and independently auditable** from a separate `AgentPrediction` store.
+> Natural-language football predictions where every agent action is **Africp-attested, collection-isolated, user-confirmed, scored by humans, and independently auditable** from a separate `AgentPrediction` store.
 
-INJAFRICA is the first **MCP-native bracket companion**. It is not a chat surface that uses AI — it is a verifiable agent layer for an LLM that **scores alongside you, not for you**. Every agent action travels a single primitive — *intent → MCP tool call → isolation check → user confirms → score on real datapoint → public claim* — and ends in an audit row you can inspect in your browser, not a vague reply.
+INJAFRICA is the first **Africp-native bracket companion**. It is not a chat surface that uses AI — it is a verifiable agent layer for an LLM that **scores alongside you, not for you**. Every agent action travels a single primitive — *intent → Africp tool call → isolation check → user confirms → score on real datapoint → public claim* — and ends in an audit row you can inspect in your browser, not a vague reply.
 
 ## INJAFRICA refuses to score the AI.
 
-Talk to the agent in English, French, Spanish, Portuguese, or your own words. Debate scorelines, draft picks, ask "can I still overtake the leader?" — all by chatting. But underneath the chat surface, **MCP isolation is required before any AI submission can write anywhere**, not optional plumbing for tool calls.
+Talk to the agent in English, French, Spanish, Portuguese, or your own words. Debate scorelines, draft picks, ask "can I still overtake the leader?" — all by chatting. But underneath the chat surface, **Africp isolation is required before any AI submission can write anywhere**, not optional plumbing for tool calls.
 
 ---
 
@@ -24,7 +24,7 @@ Then verify the action yourself in **/profile** — your AgentPrediction row app
 
 ---
 
-**Features** · **Why INJAFRICA** · **Quick Start** · **Architecture** · **MCP Integration Reference** · **Usage Reference** · **Testing Reference** · **Deploy Guide** · **Project Structure** · **Roadmap**
+**Features** · **Why INJAFRICA** · **Quick Start** · **Architecture** · **Africp Integration Reference** · **Usage Reference** · **Testing Reference** · **Deploy Guide** · **Project Scope** · **Project Structure** · **Roadmap**
 
 ---
 
@@ -37,9 +37,9 @@ Then verify the action yourself in **/profile** — your AgentPrediction row app
  Discord OAuth ──▶ │  /agent ───▶ /api/agent-chat ──▶ Groq ReAct  │
                    │         │                       │             │
                    │         │                       ▼             │
-                   │         │               /lib/mcp/handlers.ts  │
+                   │         │               /lib/africp/handlers.ts  │
                    │         │                       │             │
-                   │         └─────────▶ /api/mcp  ──▶ JSON-RPC    │
+                   │         └─────────▶ /api/africp  ──▶ JSON-RPC    │
                    │                          (5 tools)           │
                    └──────────────────────────────┬────────────────┘
                                                   │
@@ -63,17 +63,17 @@ Most AI prediction tools treat the LLM as a chatbot bolted onto a leaderboard. I
 
 That is a different product. The defining question is not *"does it understand football?"* (it does, in 5+ languages). It is:
 
-> **What breaks if MCP isolation is removed?**
+> **What breaks if Africp isolation is removed?**
 
-- Without the **MCP server**, every LLM call would be a free-form string parse — unauditable, unrate-limited, unfalsifiable.
+- Without the **Africp server**, every LLM call would be a free-form string parse — unauditable, unrate-limited, unfalsifiable.
 - Without **`AgentPrediction` as a separate collection**, the agent's first bad pick could silently corrupt a leaderboard that's tied to a funded reward pool.
 - Without a **published skill file**, every Claude-compatible agent would reinvent the tool order, scoring rules, and tone — drifting from your codebase's truth with every session.
 
-So MCP is not a feature of INJAFRICA. **MCP is the precondition for any AI submission to remain safe.** Read that twice. It is what lets us ship a public-facing agent at all.
+So Africp is not a feature of INJAFRICA. **Africp is the precondition for any AI submission to remain safe.** Read that twice. It is what lets us ship a public-facing agent at all.
 
-### MCP is load-bearing on every feature
+### Africp is load-bearing on every feature
 
-| Feature              | Without MCP isolation            | With MCP isolation                                       |
+| Feature              | Without Africp isolation            | With Africp isolation                                       |
 | -------------------- | -------------------------------- | -------------------------------------------------------- |
 | AI submit pick       | Silent write into scoring table. | AgentPrediction row, surface-only. Scoring untouched.    |
 | Leaderboard math     | AI counts itself into the pool.  | User points stay separate from any agent activity.       |
@@ -83,7 +83,7 @@ So MCP is not a feature of INJAFRICA. **MCP is the precondition for any AI submi
 
 ### Why INJAFRICA can credibly claim this
 
-- **Every tool call, attested.** The MCP server at `/api/mcp` registers five tools against the official `@modelcontextprotocol/sdk` — not a string-parsed JSON route. Clients can call `tools/list` to confirm what they can ask for.
+- **Every tool call, attested.** INJAFRICA's branded **Africp** agent layer at `/api/africp` registers five tools against the standard Model Context Protocol SDK (`@modelcontextprotocol/sdk`) — not a string-parsed JSON route. Clients can call `tools/list` to confirm what they can ask for.
 - **Every AI submission, isolated.** `submit_prediction` writes to **`AgentPrediction`** and **only** to `AgentPrediction`. The existing `set-score` flow queries `Prediction.find({ matchId })`, which is structurally blind to agent rows. There is no overlap, even by accident.
 - **Every agent row, auditable.** `GET /api/predictions/agent-history` returns the calling user's full AgentPrediction history with `matchId` populated — viewable as a side-by-side card on `/agent` next to manual picks.
 - **Every LLM, on the same playbook.** Any Claude-compatible agent loaded with `.agents/skills/wc-prediction-strategy/SKILL.md` follows the same tool order, the same scoring math, the same tone — deterministic across sessions.
@@ -124,10 +124,10 @@ Every agent action travels the same primitive — **one dominant primitive, not 
 user intent (natural language)
    │
    ▼
-1. Discord session         ← NextAuth gates /agent + /api/mcp
+1. Discord session         ← NextAuth gates /agent + /api/africp
    │
    ▼
-2. MCP tool dispatch       ← /lib/mcp/handlers.ts (5 Zod-validated tools)
+2. Africp tool dispatch       ← /lib/africp/handlers.ts (5 Zod-validated tools)
    │                          │
    │                          ├─ 4 read-only: never write
    │                          └─ 1 write:  submit_prediction
@@ -165,8 +165,8 @@ user intent (natural language)
 
 ### Decision rules (what gets built next)
 
-1. **No new prediction feature** unless it strengthens isolation, auditability, or MCP dependency.
-2. **Every feature must answer:** *what breaks if MCP isolation is removed?*
+1. **No new prediction feature** unless it strengthens isolation, auditability, or Africp dependency.
+2. **Every feature must answer:** *what breaks if Africp isolation is removed?*
 3. **Every demo ends with** a side-by-side comparison card, not a vague "the AI said X" claim.
 
 ---
@@ -177,7 +177,7 @@ Here's what rides on top of that primitive — type what you want, see what happ
 
 ### 💬 Just Talk
 
-No commands to learn. The MCP-backed agent understands plain English (and French, Spanish, Portuguese, and 5+ more languages):
+No commands to learn. The Africp-backed agent understands plain English (and French, Spanish, Portuguese, and 5+ more languages):
 
 ```
 where am I on the leaderboard?
@@ -198,7 +198,7 @@ Each reply cites the tools it called. Each tool call is auditable from the same 
 ### ⚽ Verified Fixtures — The Ground Truth
 
 - The 73 WC2026 fixtures (group + knockout) are seeded from `src/data/wc2026-fixtures.ts` and surfaced via `GET /api/matches`.
-- Each match carries a *business key* like `"A1"` (group A, match 1) plus a stable Mongo ObjectId. The MCP tool resolution path handles either format.
+- Each match carries a *business key* like `"A1"` (group A, match 1) plus a stable Mongo ObjectId. The Africp tool resolution path handles either format.
 - `matchId` is the unique key joining `Prediction` and `AgentPrediction`. A given `(discordId, matchId)` upserts cleanly — re-submitting replaces the prior row in both collections.
 
 ### 📝 Manual Picks — The Human Path
@@ -208,14 +208,32 @@ Each reply cites the tools it called. Each tool call is auditable from the same 
 - On `/matches` you fill in `predictedHome`, `predictedAway`, optionally `predictedQualifier` for knockout draws.
 - Submit writes one row into **`Prediction`** (coll `predictions`) — unique index `{ discordId, matchId }`.
 - When an admin runs `POST /api/admin/set-score` with the real score, the existing iterations only touch `Prediction` rows. Your row gets scored; your `session.user.points` updates on the next JWT refresh.
-- Scores mirror `src/lib/points.ts` exactly — five core branches × two draw states = ten outcomes.
+- Scores mirror `src/lib/points.ts` exactly — five core branches × two draw states = ten outcomes. The full enumeration is mirrored verbatim by the Africp `get_scoring_rules()` tool and lives in `src/lib/points.ts:calculatePoints(...)`:
 
-### 🤖 AI Agent — The MCP Path
+  | Correct outcome? | Correct qualifier? | Correct score? | Is a draw? | Points |
+  | :-: | :-: | :-: | :-: | :-: |
+  | ❌ | ❌ | — | — | **0** |
+  | ❌ | ✅ | — | — | **2** |
+  | ✅ | — | ❌ | ❌ | **1** |
+  | ✅ | — | ❌ | ✅ | **3** |
+  | ✅ | ✅ | ❌ | ❌ | **3** |
+  | ✅ | ✅ | ❌ | ✅ | **5** |
+  | ✅ | — | ✅ | ❌ | **6** |
+  | ✅ | — | ✅ | ✅ | **8** |
+  | ✅ | ✅ | ✅ | ❌ | **8** |
+  | ✅ | ✅ | ✅ | ✅ | **10** |
+
+  The qualifier columns only kick in for knockout matches where the admin sets `match.qualifier` after the final scores are entered. Group-stage picks never have a qualifier, so they collapse to the four "no qualifier" rows (`1 / 3 / 6 / 8`).
+- **Re-scoring is safe.** The admin `set-score` flow computes `diff = pts - prevPts` and runs `User.findOneAndUpdate({ discordId }, { $inc: { points: diff } })`. Correcting a previously-set match (typo, late goal, extra time, bracket correction) never double-counts and never silently drops previously-awarded points — the score on the row updates and the leaderboard delta is one integer.
+
+### 🤖 AI Agent — The Africp Path
 
 - A chat surface at `/agent` posts to `POST /api/agent-chat`. The handler runs a server-side **Groq** ReAct loop (default model `llama-3.3-70b-versatile`, max 5 iterations, in-memory sliding-window rate limit per `discordId`).
-- Every iteration dispatches a tool by name through `/lib/mcp/handlers.ts` — the **same registry** `src/lib/mcp/server.ts` registers against the `@modelcontextprotocol/sdk`. There is one tool source, two transport surfaces (JSON-RPC + Groq).
+- Every iteration dispatches a tool by name through `/lib/africp/handlers.ts` — the **same registry** `src/lib/africp/server.ts` registers against the `@modelcontextprotocol/sdk`. There is one tool source, two transport surfaces (JSON-RPC + Groq).
 - The response payload returns `{ assistantMessage, messages, toolTrace }` — the UI chips the tools it called, and if `submit_prediction` appears in the trace, refetches `/api/predictions/agent-history` to refresh the comparison panel.
 - Groq API keys live server-side as `GROQ_API_KEY`. The client never sees them.
+- **The Africp server is built per request.** `src/lib/africp/server.ts` exports `createAfricpServer(session)`, called fresh on every `/api/africp` invocation. Tool callbacks close over the requesting user's `session`, so a follow-up request from a different user can never read or write the previous request's context — there is no module-cached `McpServer` to leak across boundaries. The `McpServer` instance is local to the route handler and goes out of scope once the response is sent, so no long-lived transport streams survive the request.
+- **The chat body is Zod-validated before any LLM call.** `BodySchema` in `/api/agent-chat/route.ts` rejects malformed `messages` (wrong role, oversized content, empty array, > 50 turns) with a 400, so a hostile client cannot burn Groq credits or seed a poisoned context window. The route also runs at `runtime = 'nodejs'` (Mongoose + Web fetch need it), and is rate-limited to **10 requests / 60 seconds** per `discordId` in an in-memory sliding window with a 429 + `Retry-After` header.
 
 ### 🛡️ Collection Isolation — The Safety Story
 
@@ -224,7 +242,7 @@ This is the **load-bearing safety property**. Read it carefully:
 | Collection          | Who writes                              | Who reads                                                                 |
 | ------------------- | --------------------------------------- | ------------------------------------------------------------------------- |
 | `predictions`       | `/matches` form, admin seed/reset paths | `set-score` (admin), leaderboard math, profile view                       |
-| `agentpredictions`  | **`submit_prediction` MCP tool ONLY**   | `/agent` comparison panel, `/api/predictions/agent-history` (display-only)|
+| `agentpredictions`  | **`submit_prediction` Africp tool ONLY**   | `/agent` comparison panel, `/api/predictions/agent-history` (display-only)|
 
 `-` in the cross-product means: **nobody**. That is what makes the system safe even if the agent hallucinates.
 
@@ -235,14 +253,14 @@ This is the **load-bearing safety property**. Read it carefully:
 | Agent calls every read tool 100 times                               | `points` unchanged    |
 | You (manual) submit one correct pick on `/matches`                 | `points` increments   |
 
-**No double-counting is possible by construction.** Add to this the fact that the MCP route (and only the MCP route) registers handlers — and that the handlers don't import `Prediction` or `User` writes — and you have a system where a buggy, compromised, or naive agent cannot bump your points or distort the leaderboard.
+**No double-counting is possible by construction.** Add to this the fact that the Africp route (and only the Africp route) registers handlers — and that the handlers don't import `Prediction` or `User` writes — and you have a system where a buggy, compromised, or naive agent cannot bump your points or distort the leaderboard.
 
 ### 🧠 Authorless Skill — The Playbook
 
 - `.agents/skills/wc-prediction-strategy/SKILL.md` is a YAML-frontmatter Markdown file describing exactly how any Claude-compatible agent should reason about WC2026 INJAFRICA questions.
 - It pins the tool-call order (`get_user_points` → `get_leaderboard` → `get_upcoming_matches`), the scoring table (mirror of `src/lib/points.ts`), the gap-closing math (`C_conservative = R × 6`, `C_generous = R × 8`, `C_ceiling = R × 10`), and the tone.
 - **Stable frontmatter trigger keywords** (`leaderboard rank`, `agent prediction`, `WC2026`, etc.) keep this skill from firing on unrelated queries. Stable content keeps it accurate when the codebase drifts.
-- The skill is **content**, not source-of-truth for tool surfaces. The MCP server (`/api/mcp`) is. The skill just teaches any LLM how to use that surface.
+- The skill is **content**, not source-of-truth for tool surfaces. The Africp server (`/api/africp`) is. The skill just teaches any LLM how to use that surface.
 
 ### 🏅 Leaderboard — The Public Score
 
@@ -271,7 +289,7 @@ The `/adminTebas` route gates on `ADMIN_DISCORD_IDS` (comma-separated env). Insi
 
 ### 🤖 AI Tools — The Depth Under the Hood
 
-The MCP server exposes **5 LLM-callable tools** at `src/lib/mcp/handlers.ts`, dispatched verbatim by `src/lib/mcp/tools.ts` (MCP transport) and `src/lib/mcp/groq-tools.ts` (Groq transport). The single registry is enforced by `Object.entries(handlers).forEach(...)`:
+The Africp server exposes **5 LLM-callable tools** at `src/lib/africp/handlers.ts`, dispatched verbatim by `src/lib/africp/tools.ts` (Africp transport) and `src/lib/africp/groq-tools.ts` (Groq transport). The single registry is enforced by `Object.entries(handlers).forEach(...)`:
 
 | Tool                                                       | Purpose                                                          | Mutates?                  |
 | ---------------------------------------------------------- | ---------------------------------------------------------------- | ------------------------- |
@@ -298,9 +316,9 @@ The MCP server exposes **5 LLM-callable tools** at `src/lib/mcp/handlers.ts`, di
 
 - **Discord OAuth only** (no email/password). JWT secret in `AUTH_SECRET`.
 - **Agent writes isolated to `AgentPrediction`.** `set-score` reads `Prediction` only. Cross-product ≠ 0 is a regression we ship-test in CI.
-- **`/api/mcp` is NextAuth-gated.** Every `tools/call` is shape-checked by Zod before dispatch. Auth-checked handler-level.
+- **`/api/africp` is NextAuth-gated.** Every `tools/call` is shape-checked by Zod before dispatch. Auth-checked handler-level.
 - **`/api/predictions/agent-history` is auth-gated** to the caller's `discordId`. No user can read another user agent-history.
-- **All MCP routes run on the Node.js runtime** (Mongoose + WebStandard transport require it).
+- **All Africp routes run on the Node.js runtime** (Mongoose + WebStandard transport require it).
 - **The Groq key never reaches the client.** It lives server-side as `GROQ_API_KEY`; the client posts to `/api/agent-chat` and gets `{ assistantMessage, messages, toolTrace }` back.
 - **No sensitive wallets/private keys** in the LLM context. The wallet address is a public display field; never used for signing on behalf of the user.
 
@@ -310,14 +328,14 @@ The MCP server exposes **5 LLM-callable tools** at `src/lib/mcp/handlers.ts`, di
 
 ### 🧬 Smoke test (one-shot, in-memory)
 
-`npm run smoke:mcp` runs `scripts/smoke-mcp-auth.mjs`, which spins up `MongoMemoryServer`, runs an in-memory mongod, seeds one user + one future-dated match, spawns `next dev`, mints a real NextAuth v5 JWT via `next-auth/jwt`, POSTs JSON-RPC `tools/call submit_prediction` against `/api/mcp`, GETs `/api/predictions/agent-history`, and asserts the isolation invariants (`User.points === 0`, `Prediction` count is 0, `AgentPrediction` count is 1, response text contains `"isolated": true`).
+`npm run smoke:africp` runs `scripts/smoke-africp-auth.mjs`, which spins up `MongoMemoryServer`, runs an in-memory mongod, seeds one user + one future-dated match, spawns `next dev`, mints a real NextAuth v5 JWT via `next-auth/jwt`, POSTs JSON-RPC `tools/call submit_prediction` against `/api/africp`, GETs `/api/predictions/agent-history`, and asserts the isolation invariants (`User.points === 0`, `Prediction` count is 0, `AgentPrediction` count is 1, response text contains `"isolated": true`).
 
 The script temporarily renames the project `.env` to `.env.smoke-backup` so Next.js's dotenv-loader can't override the smoke MONGODB_URI with a baked-in dev value. Restores in cleanup with `process.on('exit')` fallback.
 
 Run with:
 
 ```bash
-npm run smoke:mcp
+npm run smoke:africp
 ```
 
 ### Linting / typechecking
@@ -368,10 +386,70 @@ INJAFRICA is a standard Next.js 14 app. Anything that runs Next 14 + Node 18+ + 
 4. **Smoke test on a fresh deploy**
 
    ```bash
-   npm run smoke:mcp
+   npm run smoke:africp
    ```
 
-   Connects to `process.env.MONGODB_URI`, exercises the full MCP round-trip, asserts isolation invariants. Should pass on any environment that can run `next dev` + `next-auth`.
+   Connects to `process.env.MONGODB_URI`, exercises the full Africp round-trip, asserts isolation invariants. Should pass on any environment that can run `next dev` + `next-auth`.
+
+---
+
+## 🎯 Project Scope
+
+INJAFRICA's codespace is a self-contained Next.js 14 application: one web app, one MongoDB-backed API, one Africp-attested agent surface, one static skill file, and one offline smoke test. There is no separate backend service, no worker queue, no scheduled job beyond the manual `set-score` admin action. Everything you can read in this repo either ships with the deployment or is a fixture you seed on day one.
+
+### In scope
+
+- **Discord-OAuth sign-in** for players and admins (`src/lib/auth.ts`).
+- **73 hard-coded WC2026 fixtures** in `src/data/wc2026-fixtures.ts`, surfaced via `GET /api/matches`.
+- **Manual pick submission** through `/matches` and `/qualification`, persisting into the `Prediction` Mongo collection.
+- **Admin score entry** through `/adminTebas`, the only path that increments `User.points`.
+- **Agent chat** at `/agent` backed by a Groq ReAct loop (`/api/agent-chat`) and the Africp server (`/api/africp`).
+- **Five Africp tools** (`get_leaderboard`, `get_user_points`, `get_upcoming_matches`, `submit_prediction`, `get_scoring_rules`) — four read-only, one write isolated to `AgentPrediction`.
+- **Public leaderboard and player-profile pages** rendering from the same `User` collection.
+- **Optional wallet display** — address stamped onto the user's row; never used for signing.
+- **One offline smoke test** (`scripts/smoke-africp-auth.mjs`) that exercises an end-to-end Africp round-trip and asserts the isolation invariants.
+
+### Out of scope
+
+- **Live score ingestion.** The admin `set-score` flow is the only way to update a `Match.homeScore` / `Match.awayScore` / `Match.qualifier` — no scrape, no feed parser, no cron.
+- **Wallet signing / on-chain payouts.** The wallet field is display-only; reward disbursement is the operator's separate process.
+- **Email / SMS / push notifications.** No outbound notifications of any kind.
+- **Multi-tournament support.** Models, fixtures, the skill file, and the scoring table are all WC2026-specific. A WC2030 fork would fork `SKILL.md`, swap `wc2026-fixtures.ts`, and re-derive the scoring math.
+- **Native mobile apps.** Browser only; no React Native, no Expo, no Capacitor wrapper.
+- **Self-hosted LLM.** The agent runs server-side against Groq only; no Ollama / vLLM / local-model path.
+- **Public sign-up.** Users are minted into the `User` collection on first Discord OAuth sign-in. There is no email/password path.
+- **Public Africp endpoints.** `/api/africp` requires a valid NextAuth JWT — anonymous callers get a 401 before any tool is dispatched.
+
+### Tech stack
+
+| Layer              | Choice                                  | Where it lives                                |
+| ------------------ | --------------------------------------- | --------------------------------------------- |
+| Web framework      | Next.js 14 (App Router)                 | `next.config.mjs`, `src/app/`                 |
+| Language           | TypeScript (strict)                     | `tsconfig.json`                               |
+| Styling            | Tailwind 3                              | `tailwind.config.ts`, `src/app/globals.css`   |
+| Auth               | NextAuth v5 (Discord provider)          | `src/lib/auth.ts`, `src/app/api/auth/...`     |
+| Database / ORM     | Mongoose 8 → MongoDB                    | `src/lib/mongodb.ts`, `src/models/`           |
+| Agent transport (Africp) | `@modelcontextprotocol/sdk` (Model Context Protocol SDK) | `src/lib/africp/`                                |
+| LLM                | `groq-sdk` → Llama 3.3 70B Versatile    | `src/app/api/agent-chat/route.ts`             |
+| Runtime validation | Zod 4                                   | handlers + route schemas                      |
+| Test harness       | `mongodb-memory-server` + custom script | `scripts/smoke-africp-auth.mjs`                  |
+
+### Subsystem map
+
+| Subsystem              | Files                                                                                                                                  | Purpose                                                                                                                                |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Auth & session**     | `src/lib/auth.ts`, `src/app/api/auth/[...nextauth]/route.ts`, `src/components/AuthButton.tsx`                                          | Discord OAuth, JWT minting, session callbacks that refresh `points` / `walletAddress` from Mongo on every decode.                      |
+| **Persistence**        | `src/lib/mongodb.ts`, `src/models/*`                                                                                                   | Cached Mongoose connection; the four schemas (`User`, `Match`, `Prediction`, `AgentPrediction`) plus a `Settings` singleton.           |
+| **Scoring engine**     | `src/lib/points.ts`                                                                                                                    | Pure `calculatePoints(...)` — the source of truth that the `Prediction` `set-score` flow and the Africp `get_scoring_rules()` both mirror. |
+| **Manual UI surface**  | `src/app/matches/page.tsx`, `src/app/qualification/page.tsx`, `src/components/{PredictionForm,QualificationForm,MatchCard}.tsx`        | Human-facing pick flows; writes land in `Prediction`.                                                                                  |
+| **Agent surface**      | `src/app/agent/page.tsx`, `src/app/api/agent-chat/route.ts`, `src/components/AgentComparisonCard.tsx`                                 | Chat UI + server-side ReAct loop + the side-by-side comparison card that proves isolation.                                            |
+| **Africp core**           | `src/lib/africp/{handlers,tools,server,groq-tools}.ts`                                                                                   | Single tool registry; two transport surfaces (JSON-RPC + Groq). Built fresh per request.                                              |
+| **Admin console**      | `src/app/adminTebas/page.tsx`, `src/app/api/admin/**`                                                                                 | Gated by `ADMIN_DISCORD_IDS`; sole mutator of `User.points` (via `set-score`), sole writer of `Match` home/away/qualifier.            |
+| **Read mirrors**       | `src/app/api/{matches,leaderboard,players,predictions/profile,predictions/agent-history}/**`, `src/app/{dashboard,profile}/page.tsx`, `src/components/{LeaderboardTable,PointsTicker,Navbar}.tsx` | Public and authenticated data surfaces; never write.                                                                                  |
+| **Wallet (display)**   | `src/app/api/wallet/route.ts`, wallet form on `src/app/profile/page.tsx`                                                              | Optional wallet stamp on the user's row, mirrored into `session.user.walletAddress`. No signing.                                      |
+| **Fixtures & seed**    | `src/data/wc2026-fixtures.ts`, `src/app/api/admin/seed/route.ts`                                                                      | 73 hard-coded WC2026 matches + dev-only seeder run on first deploy.                                                                    |
+| **Authorless skill**   | `.agents/skills/wc-prediction-strategy/SKILL.md`                                                                                      | YAML-frontmatter playbook for any Claude-compatible agent. Pins tool order, scoring table, and tone.                                  |
+| **Smoke test**         | `scripts/smoke-africp-auth.mjs`                                                                                                          | One-shot in-memory end-to-end: spins MongoMemoryServer, mints a JWT, posts JSON-RPC `tools/call submit_prediction`, asserts isolation.|
 
 ---
 
@@ -384,11 +462,11 @@ injafrica/
 │       └── wc-prediction-strategy/
 │           └── SKILL.md              # Authorless skill for any Claude-compatible agent
 ├── scripts/
-│   └── smoke-mcp-auth.mjs            # End-to-end in-memory MCP smoke test
+│   └── smoke-africp-auth.mjs            # End-to-end in-memory Africp smoke test
 ├── src/
 │   ├── app/
 │   │   ├── api/
-│   │   │   ├── mcp/route.ts          # JSON-RPC MCP transport (NextAuth-gated)
+│   │   │   ├── africp/route.ts          # JSON-RPC Africp transport (NextAuth-gated)
 │   │   │   ├── agent-chat/route.ts   # Server-side Groq ReAct loop
 │   │   │   ├── predictions/{profile,agent-history}/route.ts
 │   │   │   ├── admin/{seed,set-score,create-match,reset-points,tournament-status,users,wallets,me}/route.ts
@@ -419,8 +497,8 @@ injafrica/
 │   │   ├── auth.ts                   # NextAuth v5 (Discord) + JWT + session callbacks
 │   │   ├── mongodb.ts                # Cached Mongoose connection
 │   │   ├── points.ts                 # Scoring rules (load-bearing)
-│   │   └── mcp/
-│   │       ├── handlers.ts           # 5 MCP tools, single source of truth
+│   │   └── africp/
+│   │       ├── handlers.ts           # 5 Africp tools, single source of truth
 │   │       ├── tools.ts              # Registers handlers on McpServer
 │   │       ├── server.ts             # Builds McpServer per request
 │   │       └── groq-tools.ts         # OpenAI/Groq-format parallel tool defs

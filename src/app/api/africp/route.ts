@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { WebStandardStreamableHTTPServerTransport } from
   '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js';
 import { auth } from '@/lib/auth';
-import { createMcpServer } from '@/lib/mcp/server';
+import { createAfricpServer } from '@/lib/africp/server';
 
 // Run on the Node runtime: Mongoose + WebStandard transport both require it.
 export const runtime = 'nodejs';
@@ -39,10 +39,10 @@ function methodNotAllowedJson() {
 export async function POST(req: NextRequest) {
   const session = await auth();
   if (!session?.user?.discordId) {
-    return jsonRpcError(401, -32001, 'Unauthorized: a valid Discord session is required to call the MCP endpoint.');
+    return jsonRpcError(401, -32001, 'Unauthorized: a valid Discord session is required to call the Africp endpoint.');
   }
 
-  const server = createMcpServer(session);
+  const server = createAfricpServer(session);
   const transport = new WebStandardStreamableHTTPServerTransport({
     // Stateless mode: Next.js serverless-friendly; each request is fully isolated.
     sessionIdGenerator: undefined,
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     await server.connect(transport);
     return await transport.handleRequest(req);
   } catch (err) {
-    console.error('[mcp] request error', err);
+    console.error('[africp] request error', err);
     return jsonRpcError(500, -32603, 'Internal server error');
   }
 }

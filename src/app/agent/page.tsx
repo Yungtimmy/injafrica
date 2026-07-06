@@ -160,7 +160,7 @@ export default function AgentPage() {
       <header className="sb-card overflow-hidden">
         <div className="sb-section-header flex items-center gap-3">
           <span className="w-2 h-2 rounded-full bg-sb-yellow pulse-live" />
-          AI Prediction Agent · MCP-powered
+          AI Prediction Agent · Africp-powered
         </div>
         <div className="p-4 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">

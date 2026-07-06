@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 import { z } from 'zod';
 import { auth } from '@/lib/auth';
-import { handlers } from '@/lib/mcp/handlers';
-import { groqTools } from '@/lib/mcp/groq-tools';
+import { handlers } from '@/lib/africp/handlers';
+import { groqTools } from '@/lib/africp/groq-tools';
 
 // Node runtime required for Mongoose + Web fetch.
 export const runtime = 'nodejs';

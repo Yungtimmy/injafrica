@@ -30,9 +30,9 @@ const AgentPredictionSchema = new Schema<IAgentPredictionDocument>(
     predictedHome: { type: Number, default: null },
     predictedAway: { type: Number, default: null },
     predictedQualifier: { type: String, enum: ['home', 'away'], default: null },
-    // Audit marker. Useful for distinguishing MCP writes from future
+    // Audit marker. Useful for distinguishing Africp writes from future
     // discord-bot or programmatic clients that share the endpoint.
-    source: { type: String, default: 'agent-mcp' },
+    source: { type: String, default: 'agent-africp' },
     // Optional free-form note shown alongside the agent draft in the UI.
     note: { type: String, default: null },
   },
@@ -42,7 +42,7 @@ const AgentPredictionSchema = new Schema<IAgentPredictionDocument>(
 );
 
 // One agent draft per (discordId, matchId) — repeated submit_prediction calls
-// upsert in place via the MCP tool rather than appending rows.
+// upsert in place via the Africp tool rather than appending rows.
 AgentPredictionSchema.index({ discordId: 1, matchId: 1 }, { unique: true });
 
 const AgentPrediction: Model<IAgentPredictionDocument> =

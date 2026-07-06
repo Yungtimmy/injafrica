@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * scripts/smoke-mcp-auth.mjs — Authenticated MCP round-trip smoke test.
+ * scripts/smoke-africp-auth.mjs — Authenticated Africp round-trip smoke test.
  *
  * Plan:
  *   1. Spin up an in-memory Mongo (mongodb-memory-server).
@@ -14,12 +14,12 @@
  *      discriminator, avatar, points, walletAddress — username/avatar
  *      are NOT refreshed from the DB on every request, so leaving
  *      them out would set them to undefined in session.user.*.
- *   5. POST /api/mcp with tools/call=submit_prediction → JSON-RPC.
+ *   5. POST /api/africp with tools/call=submit_prediction → JSON-RPC.
  *   6. GET /api/predictions/agent-history.
  *   7. Assert isolation: User.points still 0, Prediction empty, AgentPrediction = 1.
  *   8. Tear down.
  *
- * Run via `npm run smoke:mcp`.
+ * Run via `npm run smoke:africp`.
  */
 
 import { spawn } from 'node:child_process';
@@ -102,7 +102,7 @@ const AgentPredictionSchema = new mongoose.Schema(
     predictedHome: { type: Number, default: null },
     predictedAway: { type: Number, default: null },
     predictedQualifier: { type: String, enum: ['home', 'away'], default: null },
-    source: { type: String, default: 'agent-mcp' },
+    source: { type: String, default: 'agent-africp' },
     note: { type: String, default: null },
   },
   { timestamps: true }
@@ -286,15 +286,15 @@ async function main() {
     const cookie = `${COOKIE_NAME}=${jwtToken}`;
     log(`minted JWT (${jwtToken.length} chars)`);
 
-    // 5. POST /api/mcp with tools/call=submit_prediction
-    log('POST /api/mcp { method: tools/call, params: { name: submit_prediction } }');
-    const mcpRes = await fetch(`http://127.0.0.1:${PORT}/api/mcp`, {
+    // 5. POST /api/africp with tools/call=submit_prediction
+    log('POST /api/africp { method: tools/call, params: { name: submit_prediction } }');
+    const africpRes = await fetch(`http://127.0.0.1:${PORT}/api/africp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // MCP HTTP transport (StreamableHTTPServerTransport) requires the
-        // client to advertise willingness to receive SSE, even though our
-        // route sets enableJsonResponse: true and returns plain JSON.
+        // The StreamableHTTPServerTransport (under @modelcontextprotocol/sdk)
+        // expects the client to advertise willingness to receive SSE, even
+        // though our route sets enableJsonResponse: true and returns JSON.
         Accept: 'application/json, text/event-stream',
         Cookie: cookie,
       },
@@ -313,25 +313,25 @@ async function main() {
         },
       }),
     });
-    const mcpText = await mcpRes.text();
+    const africpText = await africpRes.text();
     assert(
-      mcpRes.status === 200,
-      `MCP POST returned HTTP ${mcpRes.status}. Body: ${mcpText.slice(0, 500)}`
+      africpRes.status === 200,
+      `POST returned HTTP ${africpRes.status}. Body: ${africpText.slice(0, 500)}`
     );
-    const mcpJson = JSON.parse(mcpText);
+    const africpJson = JSON.parse(africpText);
     assert(
-      !mcpJson.error,
-      `MCP returned JSON-RPC error: ${JSON.stringify(mcpJson.error)}`
+      !africpJson.error,
+      `Africp returned JSON-RPC error: ${JSON.stringify(africpJson.error)}`
     );
     assert(
-      mcpJson.result && Array.isArray(mcpJson.result.content),
-      'MCP response did not include result.content array'
+      africpJson.result && Array.isArray(africpJson.result.content),
+      'response did not include result.content array'
     );
-    const contentText = mcpJson.result.content.map((c) => c.text).join('\n');
-    log('MCP content text:\n' + contentText);
+    const contentText = africpJson.result.content.map((c) => c.text).join('\n');
+    log('Africp content text:\n' + contentText);
     assert(
       contentText.includes('"isolated": true'),
-      `MCP response missing isolation fact. Got: ${contentText}`
+      `response missing isolation fact. Got: ${contentText}`
     );
 
     // 6. GET /api/predictions/agent-history
@@ -357,8 +357,8 @@ async function main() {
       `agent pick wrong: ${pick.predictedHome}-${pick.predictedAway}, expected 2-1`
     );
     assert(
-      pick.source === 'agent-mcp',
-      `agent pick source wrong: ${pick.source}, expected agent-mcp`
+      pick.source === 'agent-africp',
+      `agent pick source wrong: ${pick.source}, expected agent-africp`
     );
     assert(
       pick.note === 'smoke test prediction',

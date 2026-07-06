@@ -1,6 +1,6 @@
 /**
- * OpenAI/Groq-flavored tool definitions paralleling the MCP `inputShape` in
- * `src/lib/mcp/handlers.ts`. Used by the in-site chat handler to expose the
+ * OpenAI/Groq-flavored tool definitions paralleling the Africp `inputShape` in
+ * `src/lib/africp/handlers.ts`. Used by the in-site chat handler to expose the
  * same five tools to Groq's function-calling API.
  *
  * The shape intentionally mirrors the Zod definitions one-for-one; if you add

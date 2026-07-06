@@ -26,16 +26,16 @@ export interface ToolDefinition {
 }
 
 /**
- * Single source of truth for all MCP / chat tool handlers.
+ * Single source of truth for all Africp / chat tool handlers.
  *
  * Each entry exposes:
- *   - description: shown to the LLM (and to MCP clients on list)
+ *   - description: shown to the LLM (and to Africp clients on list)
  *   - inputShape: Zod raw-shape used by the MCP SDK + manually mirrored
- *                 as OpenAI JSON schema for Groq in @/lib/mcp/groq-tools.ts
+ *                 as OpenAI JSON schema for Groq in @/lib/africp/groq-tools.ts
  *   - handler: pure async function (args, ctx) => ToolResult
  *
  * Consumers:
- *   - src/lib/mcp/tools.ts      (registers each on a fresh McpServer)
+ *   - src/lib/africp/tools.ts      (registers each on a fresh McpServer)
  *   - src/app/api/agent-chat    (calls handlers[name].handler directly)
  */
 export const handlers: Record<string, ToolDefinition> = {
@@ -281,7 +281,7 @@ export const handlers: Record<string, ToolDefinition> = {
               predictedHome,
               predictedAway,
               predictedQualifier: predictedQualifier ?? null,
-              source: 'agent-mcp',
+              source: 'agent-africp',
               note: note ?? null,
             },
           },
@@ -328,7 +328,7 @@ export const handlers: Record<string, ToolDefinition> = {
           ],
         };
       } catch (err) {
-        console.error('[mcp] submit_prediction error', err);
+        console.error('[africp] submit_prediction error', err);
         return {
           content: [
             {
@@ -355,7 +355,7 @@ export const handlers: Record<string, ToolDefinition> = {
         '',
         'For each finished match, the existing admin set-score flow iterates',
         'the "Prediction" collection only. Agent-submitted predictions live in',
-        'the separate "AgentPrediction" collection and are NOT scored, so this MCP',
+        'the separate "AgentPrediction" collection and are NOT scored, so this Africp',
         'server cannot affect real points by design.',
         '',
         'Per-match points awarded by calculatePoints():',

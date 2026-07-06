@@ -7,7 +7,7 @@ description: Use this skill whenever asked about leaderboard standing, point gap
 
 ## 1. CRITICAL isolation fact (read this first)
 
-The MCP tool `submit_prediction` writes to a **separate MongoDB collection called `AgentPrediction`** that is **invisible** to the scoring system.
+The Africp tool `submit_prediction` writes to a **separate MongoDB collection called `AgentPrediction`** that is **invisible** to the scoring system.
 
 - `User.points` is increased ONLY by the admin `set-score` flow, which iterates the `Prediction` collection.
 - `AgentPrediction` rows are never read by `set-score`, never summed into leaderboard totals, never earn points.
@@ -19,7 +19,7 @@ The MCP tool `submit_prediction` writes to a **separate MongoDB collection calle
 
 ## 2. Available tools
 
-The MCP server exposes five tools. Use them in this order for a typical strategy query:
+The Africp server exposes five tools. Use them in this order for a typical strategy query:
 
 | Tool | Purpose | Returns shape |
 |---|---|---|
@@ -112,11 +112,11 @@ Always cite the numbers. Always cite the tools you used.
 
 ## 7. What this skill is NOT for
 
-- **Manual pick submission** — direct to `/matches`. The MCP tools don't replace the human-facing form.
+- **Manual pick submission** — direct to `/matches`. The Africp tools don't replace the human-facing form.
 - **Wallet submission** — direct to `/profile`. Out of scope for predictions entirely.
 - **Admin work** — score entry, tournament toggle, user management. Out of scope.
 - **Other tournaments or sports** — only FIFA WC 2026 / INJAFRICA data exists.
 
 ## 8. Stability note for LLM context
 
-This skill is deterministic content, not a tool source. The **live tool registry** is what the MCP server exposes (`/api/mcp`); if the tool list ever expands, prefer to read `/api/mcp`'s `tools/list` instead of trusting this file alone.
+This skill is deterministic content, not a tool source. The **live tool registry** is what the Africp server exposes (`/api/africp`); if the tool list ever expands, prefer to read `/api/africp`'s `tools/list` instead of trusting this file alone.

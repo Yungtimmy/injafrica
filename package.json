@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "smoke:mcp": "node scripts/smoke-mcp-auth.mjs"
+    "smoke:africp": "node scripts/smoke-africp-auth.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
