@@ -120,3 +120,15 @@ Always cite the numbers. Always cite the tools you used.
 ## 8. Stability note for LLM context
 
 This skill is deterministic content, not a tool source. The **live tool registry** is what the Africp server exposes (`/api/africp`); if the tool list ever expands, prefer to read `/api/africp`'s `tools/list` instead of trusting this file alone.
+
+## 9. Offline Bundle (no live Africp endpoint)
+
+If `/api/africp` is unreachable or the installing agent has no authenticated Discord session, this skill can still produce non-empty reasoning by reading the static bundle that ships with the repo (served from `public/`):
+
+| URL | Replaces tool | Notes |
+|---|---|---|
+| `/wc2026-fixtures.json` | `get_upcoming_matches` | All 72 group-stage WC2026 matches. Rows are grouped by group letter (A→L); offline reasoning MUST sort the array by `matchDate` ascending to mirror the live tool's behavior. |
+| `/wc2026-leaderboard-snapshot.json` | `get_leaderboard` | Top-10 synthetic snapshot. `_meta.syntheticData: true` — surface that fact to the user and don't treat any username as a real player. The fixtures file is **not** synthetic (it carries real WC2026 group-stage data); only the leaderboard file is. |
+| `/wc2026-fixtures-bundle/index.json` | n/a | Manifest listing both URLs plus loader hints and what's NOT bundled. |
+
+`get_scoring_rules` is unaffected — the same text is already in this skill file (Section 3 — Scoring rules). `get_user_points` and `submit_prediction` cannot be reasonably faked offline; if the user asks for either while the live endpoint is down, surface that and stop rather than fabricating data.

@@ -1,0 +1,68 @@
+{
+  "name": "wc-prediction-strategy",
+  "version": "0.1.0",
+  "description": "Strategic FIFA World Cup 2026 prediction reasoning for INJAFRICA's verifiably-isolated AI companion. Uses the Africp tools — get_leaderboard, get_user_points, get_upcoming_matches, submit_prediction, get_scoring_rules — to compute point-gap math, rank-catchup ceilings, and recommended pick strategy. Triggers on queries about leaderboard rank, ranking, catching up, overtaking, 'can I still win', points gap, WC2026, INJAFRICA, World Cup prediction, agent prediction, or any specific team-vs-team match in the tournament. Always surfaces the scoring-isolation fact after submit_prediction (the agent's draft lives in a separate Mongo collection and never affects user points).",
+  "license": "MIT",
+  "tags": [
+    "world-cup-2026",
+    "predictions",
+    "leaderboard",
+    "strategy",
+    "africp",
+    "sports",
+    "injafrica"
+  ],
+  "metadata": {
+    "displayName": "WC2026 INJAFRICA Prediction Strategy",
+    "triggers": [
+      "leaderboard rank",
+      "ranking",
+      "catch up",
+      "overtake",
+      "can I still win",
+      "points gap",
+      "WC2026",
+      "INJAFRICA",
+      "World Cup prediction",
+      "agent prediction",
+      "team-vs-team match"
+    ],
+    "nonTriggers": [
+      "manual pick submission (uses /matches form)",
+      "wallet submission (uses /profile)",
+      "admin score entry",
+      "other tournaments or sports"
+    ],
+    "tools": [
+      "get_leaderboard",
+      "get_user_points",
+      "get_upcoming_matches",
+      "submit_prediction",
+      "get_scoring_rules"
+    ],
+    "companionServer": {
+      "name": "africp",
+      "transport": "modelcontextprotocol",
+      "sdk": "@modelcontextprotocol/sdk",
+      "endpoint": "/api/africp",
+      "isolationContract": "submit_prediction writes only to the AgentPrediction Mongo collection and is invisible to the admin set-score flow that updates User.points."
+    },
+    "offlineBundle": {
+      "fixtures": {
+        "url": "/wc2026-fixtures.json",
+        "mirrorsTool": "get_upcoming_matches",
+        "syntheticData": false,
+        "orderingNote": "Rows are grouped by group letter (A->L); consumers must sort by matchDate ascending to mirror the live tool."
+      },
+      "leaderboard": {
+        "url": "/wc2026-leaderboard-snapshot.json",
+        "mirrorsTool": "get_leaderboard",
+        "syntheticData": true
+      },
+      "manifest": {
+        "url": "/wc2026-fixtures-bundle/index.json",
+        "description": "Bundle manifest listing fixtures + leaderboard URLs, loader hints, and tools that are NOT bundled."
+      }
+    }
+  }
+}

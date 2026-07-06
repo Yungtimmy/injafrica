@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "bundle": "wc2026-leaderboard-snapshot",
+    "version": "0.1.0",
+    "frozenAt": "2026-07-06T00:00:00Z",
+    "mirrorsTool": "africp.get_leaderboard",
+    "shape": "Array of { rank, discordId, username, avatar, points } sorted by points (descending). Identical shape to the live /api/leaderboard route and the Africp get_leaderboard tool output.",
+    "syntheticData": true,
+    "source": "Synthetic. Real leaderboard data lives in the User Mongo collection and is only served by the authenticated /api/leaderboard route.",
+    "notes": "Static fallback for the wc-prediction-strategy Agent Skill. The discordId values are placeholders (all-numeric, not real Discord snowflakes) and usernames are clearly labeled `demo_player_N`. Offline agents MUST treat this as illustrative only. Reasoning that depends on identifying specific players should add an explicit caveat to the user. Real installs with a live endpoint will fetch live data from /api/leaderboard."
+  },
+  "leaderboard": [
+    { "rank": 1,  "discordId": "demo_did_1", "username": "demo_player_1",  "avatar": "https://cdn.discordapp.com/embed/avatars/0.png", "points": 67 },
+    { "rank": 2,  "discordId": "demo_did_2", "username": "demo_player_2",  "avatar": "https://cdn.discordapp.com/embed/avatars/1.png", "points": 58 },
+    { "rank": 3,  "discordId": "demo_did_3", "username": "demo_player_3",  "avatar": "https://cdn.discordapp.com/embed/avatars/2.png", "points": 51 },
+    { "rank": 4,  "discordId": "demo_did_4", "username": "demo_player_4",  "avatar": "https://cdn.discordapp.com/embed/avatars/3.png", "points": 47 },
+    { "rank": 5,  "discordId": "demo_did_5", "username": "demo_player_5",  "avatar": "https://cdn.discordapp.com/embed/avatars/4.png", "points": 42 },
+    { "rank": 6,  "discordId": "demo_did_6", "username": "demo_player_6",  "avatar": "https://cdn.discordapp.com/embed/avatars/5.png", "points": 36 },
+    { "rank": 7,  "discordId": "demo_did_7", "username": "demo_player_7",  "avatar": "https://cdn.discordapp.com/embed/avatars/0.png", "points": 28 },
+    { "rank": 8,  "discordId": "demo_did_8", "username": "demo_player_8",  "avatar": "https://cdn.discordapp.com/embed/avatars/1.png", "points": 19 },
+    { "rank": 9,  "discordId": "demo_did_9", "username": "demo_player_9",  "avatar": "https://cdn.discordapp.com/embed/avatars/2.png", "points": 12 },
+    { "rank": 10, "discordId": "demo_did_10", "username": "demo_player_10", "avatar": "https://cdn.discordapp.com/embed/avatars/3.png", "points": 6 }
+  ]
+}

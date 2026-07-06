@@ -1,0 +1,36 @@
+{
+  "name": "wc2026-fixtures-bundle",
+  "version": "0.1.0",
+  "frozenAt": "2026-07-06T00:00:00Z",
+  "description": "Static fallback for the wc-prediction-strategy Agent Skill. Mirrors the JSON shape returned by INJAFRICA's Africp `get_upcoming_matches` and `get_leaderboard` tools so a reasoning agent without a live endpoint can still produce non-empty outputs.",
+  "companionSkill": "wc-prediction-strategy",
+  "companionServer": {
+    "name": "africp",
+    "transport": "modelcontextprotocol",
+    "endpoint": "/api/africp"
+  },
+  "files": [
+    {
+      "path": "public/wc2026-fixtures.json",
+      "url": "/wc2026-fixtures.json",
+      "mirrorsTool": "africp.get_upcoming_matches",
+      "kind": "matches",
+      "count": 72,
+      "syntheticData": false
+    },
+    {
+      "path": "public/wc2026-leaderboard-snapshot.json",
+      "url": "/wc2026-leaderboard-snapshot.json",
+      "mirrorsTool": "africp.get_leaderboard",
+      "kind": "leaderboard",
+      "count": 10,
+      "syntheticData": true
+    }
+  ],
+  "loaderHint": "If /api/africp is unreachable or the caller's session is unauthenticated, the agent should fetch /wc2026-fixtures.json and /wc2026-leaderboard-snapshot.json in place of the corresponding tool calls. The fixtures file declares syntheticData: false (it carries the real WC2026 group-stage schedule); the leaderboard file declares syntheticData: true — surface the synthetic nature of the leaderboard to the user and recommend a live install for real player data.",
+  "notBundled": [
+    "wc2026-getScoringRules.json — the scoring rules are static text already embedded in SKILL.md",
+    "wc2026-getUserPoints.json — the user_points tool reads from the caller's authenticated session and cannot be meaningfully faked offline",
+    "wc2026-submitPrediction.json — write tool; offline agents must NEVER attempt to fabricate agent drafts"
+  ]
+}

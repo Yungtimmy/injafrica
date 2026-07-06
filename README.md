@@ -24,7 +24,7 @@ Then verify the action yourself in **/profile** — your AgentPrediction row app
 
 ---
 
-**Features** · **Why INJAFRICA** · **Quick Start** · **Architecture** · **Africp Integration Reference** · **Usage Reference** · **Testing Reference** · **Deploy Guide** · **Project Scope** · **Project Structure** · **Roadmap**
+**Features** · **Why INJAFRICA** · **Quick Start** · **Architecture** · **Africp Integration Reference** · **Usage Reference** · **Testing Reference** · **Deploy Guide** · **Install the Skill** · **Project Scope** · **Project Structure** · **Roadmap**
 
 ---
 
@@ -390,6 +390,25 @@ INJAFRICA is a standard Next.js 14 app. Anything that runs Next 14 + Node 18+ + 
    ```
 
    Connects to `process.env.MONGODB_URI`, exercises the full Africp round-trip, asserts isolation invariants. Should pass on any environment that can run `next dev` + `next-auth`.
+
+---
+
+## 📥 Install the Skill
+
+Any Claude-compatible agent can install INJAFRICA's WC2026 prediction-strategy skill — the same reasoning playbook that powers `/agent` here becomes a reusable capability on the installing agent.
+
+```bash
+npx skills add <owner>/injafrica --skill wc-prediction-strategy --yes
+```
+
+The skill ships at `.agents/skills/wc-prediction-strategy/` with `SKILL.md` (the playbook) and `skill.json` (catalog metadata: name, version, tags, triggers, tools). Verification after install:
+
+```bash
+npx skills find wc-prediction-strategy
+# → catalog lists: wc-prediction-strategy  v0.1.0  MIT  Strategic WC2026 prediction reasoning
+```
+
+The reasoning playbook expects a live Africp endpoint (`/api/africp`) for real data. **For offline installs, a static bundle ships with the repo** — `/wc2026-fixtures.json`, `/wc2026-leaderboard-snapshot.json`, and `/wc2026-fixtures-bundle/index.json` — mirroring the live tool shapes (real group-stage fixtures and a clearly-flagged synthetic leaderboard). The SKILL.md `## 9. Offline Bundle` section spells out which tools can be substituted offline and which cannot.
 
 ---
 
